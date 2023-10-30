@@ -1,0 +1,52 @@
+
+erDiagram
+    Musical {
+        int id PK
+        varchar(255) title
+        text description
+        varchar(255) theatreName
+        bigint durationInSeconds
+        varchar(255) thumbnailImageUrl
+    }
+    MusicalPricing {
+        int id PK
+        int musicalId FK
+        TicketType type
+        decimal price
+    }
+    ShowTime {
+        int id PK
+        int musicalId FK
+        date date
+        time startTime
+        time endTime "startTime + Musical.durationInSeconds"
+        int seats
+    }
+    Ticket {
+        int id PK
+        int showTimeId FK
+        TicketType type
+        decimal price
+        int seatNumber "seatNumber <= ShowTime.seats"
+    }
+    Transaction {
+        int id PK
+        int numberOfTickets
+        decimal totalPrice
+        int musicalId FK
+        int userId FK
+        int[] ticketIds
+    }
+    User {
+        int id PK
+        varchar(255) email
+        varchar(255) password
+        UserRole role
+    }
+
+    Transaction }|--|{ Ticket: contains
+    Transaction o|--|| Musical: contains
+    Musical ||--|{ MusicalPricing: has
+    Musical ||--|{ ShowTime: has
+    ShowTime ||--o{ Ticket: has
+    User }|--|{ Ticket: purchases
