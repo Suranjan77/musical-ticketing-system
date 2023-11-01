@@ -21,9 +21,6 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
     public MusicalDetailsPane() {
         initComponents();
 
-        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(1l, false));
-        splittedPanel.setRightComponent(new CalendarView());
-
         setVisible(true);
     }
 
@@ -43,10 +40,10 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
         setLayout(new java.awt.CardLayout());
 
         splittedPanel.setBackground(new java.awt.Color(255, 204, 204));
-        splittedPanel.setDividerLocation(400);
+        splittedPanel.setDividerLocation(450);
         splittedPanel.setDividerSize(1);
 
-        musicalDescriptionSplitPanel.setDividerLocation(35);
+        musicalDescriptionSplitPanel.setDividerLocation(55);
         musicalDescriptionSplitPanel.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         backToSearchButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -73,6 +70,10 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
         rootFrame.showByPanelId(PanelIds.BROWSE_PANEL_ID);
     }//GEN-LAST:event_backToSearchButtonMouseClicked
 
+    public void renderDetails(Long musicalId) {
+        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(musicalId, false));
+        splittedPanel.setRightComponent(new CalendarView());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backToSearchButton;

@@ -27,12 +27,10 @@ public class CalendarView extends javax.swing.JPanel {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        calendarControlsPanel1 = new org.musical.ticketing.view.components.calendar.CalendarControlsPanel();
+        calendarControlsPanel = new org.musical.ticketing.view.components.calendar.CalendarControlsPanel();
         calendarPane = new org.musical.ticketing.view.components.calendar.CalendarPanel();
-        timeSlotScroll = new javax.swing.JScrollPane();
         ticketTimeSlotPlane = new org.musical.ticketing.view.components.calendar.TicketTimeSlotPlane();
-        ticketTypeChooser = new org.musical.ticketing.view.components.calendar.TicketTypeChooser();
-        totalCostPane = new org.musical.ticketing.view.components.calendar.TotalCostPane();
+        accountingPane = new org.musical.ticketing.view.components.calendar.AccountingPane();
 
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -40,44 +38,35 @@ public class CalendarView extends javax.swing.JPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.01;
-        add(calendarControlsPanel1, gridBagConstraints);
+        add(calendarControlsPanel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
         add(calendarPane, gridBagConstraints);
-
-        timeSlotScroll.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
-        timeSlotScroll.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-
-        ticketTimeSlotPlane.setMaximumSize(new java.awt.Dimension(70, 90));
-        ticketTimeSlotPlane.setMinimumSize(new java.awt.Dimension(70, 90));
-        ticketTimeSlotPlane.setPreferredSize(new java.awt.Dimension(70, 90));
-        timeSlotScroll.setViewportView(ticketTimeSlotPlane);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(15, 15, 0, 15);
-        add(timeSlotScroll, gridBagConstraints);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.05;
+        gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
+        add(ticketTimeSlotPlane, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(15, 15, 10, 15);
-        add(ticketTypeChooser, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 20, 0);
-        add(totalCostPane, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weighty = 0.35;
+        add(accountingPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private org.musical.ticketing.view.components.calendar.CalendarControlsPanel calendarControlsPanel1;
+    private org.musical.ticketing.view.components.calendar.AccountingPane accountingPane;
+    private org.musical.ticketing.view.components.calendar.CalendarControlsPanel calendarControlsPanel;
     private org.musical.ticketing.view.components.calendar.CalendarPanel calendarPane;
     private org.musical.ticketing.view.components.calendar.TicketTimeSlotPlane ticketTimeSlotPlane;
-    private org.musical.ticketing.view.components.calendar.TicketTypeChooser ticketTypeChooser;
-    private javax.swing.JScrollPane timeSlotScroll;
-    private org.musical.ticketing.view.components.calendar.TotalCostPane totalCostPane;
     // End of variables declaration//GEN-END:variables
 }

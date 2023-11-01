@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.function.Consumer;
 import javax.swing.ImageIcon;
 import org.musical.ticketing.util.ImageUtils;
+import org.musical.ticketing.util.MainFrameContext;
 
 /**
  *
@@ -130,8 +131,9 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
     }//GEN-LAST:event_formMouseExited
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        if (isBrowsing && callback != null) {
-            callback.accept(this.musicalId);
+        if (isBrowsing) {
+            Long musicalId = ((BriefMusicalComponent) evt.getSource()).getMusicalId();
+            MainFrameContext.instance().getRootFrame().renderMusicalDetails(musicalId);
         }
     }//GEN-LAST:event_formMouseClicked
 

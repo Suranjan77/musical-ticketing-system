@@ -4,10 +4,10 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
+import java.awt.event.ItemEvent;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JToggleButton;
 
 /**
  *
@@ -20,14 +20,11 @@ public class TicketTimeSlotPlane extends javax.swing.JPanel {
      */
     public TicketTimeSlotPlane() {
         initComponents();
-        
+
         List<TimeSlotData> timeSlots = new ArrayList<>();
-        timeSlots.add(new TimeSlotData(0, LocalTime.now(), LocalTime.now().plusHours(1), 5));
-        timeSlots.add(new TimeSlotData(1, LocalTime.now().plusHours(2), LocalTime.now().plusHours(3), 6));
-        timeSlots.add(new TimeSlotData(2, LocalTime.now().plusHours(4), LocalTime.now().plusHours(5), 5));
-        timeSlots.add(new TimeSlotData(3, LocalTime.now().plusHours(6), LocalTime.now().plusHours(7), 5));
-        timeSlots.add(new TimeSlotData(4, LocalTime.now().plusHours(8), LocalTime.now().plusHours(9), 6));
-        timeSlots.add(new TimeSlotData(5, LocalTime.now().plusHours(10), LocalTime.now().plusHours(11), 5));
+        timeSlots.add(new TimeSlotData(0, LocalTime.now(), LocalTime.now().plusHours(1)));
+        timeSlots.add(new TimeSlotData(1, LocalTime.now().plusHours(2), LocalTime.now().plusHours(3)));
+        timeSlots.add(new TimeSlotData(2, LocalTime.now().plusHours(4), LocalTime.now().plusHours(5)));
         renderTimeSlots(timeSlots);
     }
 
@@ -40,22 +37,34 @@ public class TicketTimeSlotPlane extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        chooseTimeLayout = new javax.swing.JLabel();
+        chooseTimeComboBox = new javax.swing.JComboBox<>();
+
         setMaximumSize(new java.awt.Dimension(100, 70));
         setMinimumSize(new java.awt.Dimension(100, 70));
         setPreferredSize(new java.awt.Dimension(100, 70));
-        setLayout(new java.awt.GridLayout(0, 3, 1, 1));
+        setLayout(new java.awt.GridLayout(1, 2));
+
+        chooseTimeLayout.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); // NOI18N
+        chooseTimeLayout.setText("  Choose a Time");
+        add(chooseTimeLayout);
+
+        chooseTimeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        add(chooseTimeComboBox);
     }// </editor-fold>//GEN-END:initComponents
 
     public void renderTimeSlots(List<TimeSlotData> timeSlots) {
-        int i=0;
-        for(var slot : timeSlots) {
-            var timeSlotToggle = new JToggleButton();
-            timeSlotToggle.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); 
-            timeSlotToggle.setText(slot.formattedText());
-            add(timeSlotToggle, i++);
-        }
+        chooseTimeComboBox.removeAllItems();
+        timeSlots.forEach(slot -> chooseTimeComboBox.addItem(slot.formattedText()));
+        chooseTimeComboBox.addItemListener(this::timeSlotSelected);
     }
     
+    private void timeSlotSelected(ItemEvent event) {
+        var selectedItem = event.getItem();
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> chooseTimeComboBox;
+    private javax.swing.JLabel chooseTimeLayout;
     // End of variables declaration//GEN-END:variables
 }

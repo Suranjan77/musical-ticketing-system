@@ -24,6 +24,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         this.layout = new CardLayout();
         this.cardPanel = new JPanel(layout);
+        
+        this.musicalDetailsPane = new MusicalDetailsPane();
+        
         intiCards(cardPanel, layout);
         getContentPane().add(cardPanel);
 
@@ -57,15 +60,21 @@ public class MainFrame extends javax.swing.JFrame {
         });
 
         cardPanel.add(browsePanel, PanelIds.BROWSE_PANEL_ID);
-        cardPanel.add(new MusicalDetailsPane(), PanelIds.MUSICAL_DETAILS_PANEL_ID);
+        cardPanel.add(this.musicalDetailsPane, PanelIds.MUSICAL_DETAILS_PANEL_ID);
     }
     
     public void showByPanelId(String panelId) {
         layout.show(cardPanel, panelId);
     }
     
+    public void renderMusicalDetails(Long musicalId) {
+        showByPanelId(PanelIds.MUSICAL_DETAILS_PANEL_ID);
+        this.musicalDetailsPane.renderDetails(musicalId);
+    }
+    
     private final JPanel cardPanel;
     private final CardLayout layout;
+    private final MusicalDetailsPane musicalDetailsPane;
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
