@@ -4,7 +4,10 @@
  */
 package org.musical.ticketing.view.pages;
 
+import org.musical.ticketing.util.MainFrameContext;
+import org.musical.ticketing.util.PanelIds;
 import org.musical.ticketing.view.components.BriefMusicalComponent;
+import org.musical.ticketing.view.components.calendar.CalendarView;
 
 /**
  *
@@ -18,7 +21,8 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
     public MusicalDetailsPane() {
         initComponents();
 
-        splittedPanel.setLeftComponent(new BriefMusicalComponent(1l, false));
+        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(1l, false));
+        splittedPanel.setRightComponent(new CalendarView());
 
         setVisible(true);
     }
@@ -33,17 +37,46 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
     private void initComponents() {
 
         splittedPanel = new javax.swing.JSplitPane();
+        musicalDescriptionSplitPanel = new javax.swing.JSplitPane();
+        backToSearchButton = new javax.swing.JButton();
 
         setLayout(new java.awt.CardLayout());
 
         splittedPanel.setBackground(new java.awt.Color(255, 204, 204));
         splittedPanel.setDividerLocation(400);
         splittedPanel.setDividerSize(1);
+
+        musicalDescriptionSplitPanel.setDividerLocation(35);
+        musicalDescriptionSplitPanel.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        backToSearchButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        backToSearchButton.setText("<- Go Back to Search");
+        backToSearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                backToSearchButtonMouseClicked(evt);
+            }
+        });
+        backToSearchButton.addActionListener(this::backToSearchButtonActionPerformed);
+        musicalDescriptionSplitPanel.setTopComponent(backToSearchButton);
+
+        splittedPanel.setLeftComponent(musicalDescriptionSplitPanel);
+
         add(splittedPanel, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
+    private void backToSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backToSearchButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_backToSearchButtonActionPerformed
+
+    private void backToSearchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backToSearchButtonMouseClicked
+        var rootFrame = MainFrameContext.instance().getRootFrame();
+        rootFrame.showByPanelId(PanelIds.BROWSE_PANEL_ID);
+    }//GEN-LAST:event_backToSearchButtonMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backToSearchButton;
+    private javax.swing.JSplitPane musicalDescriptionSplitPanel;
     private javax.swing.JSplitPane splittedPanel;
     // End of variables declaration//GEN-END:variables
 }

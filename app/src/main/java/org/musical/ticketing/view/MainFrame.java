@@ -6,6 +6,7 @@ package org.musical.ticketing.view;
 
 import java.awt.CardLayout;
 import javax.swing.JPanel;
+import org.musical.ticketing.util.PanelIds;
 import org.musical.ticketing.view.pages.BrowsePane;
 import org.musical.ticketing.view.pages.MusicalDetailsPane;
 
@@ -21,12 +22,12 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame() {
         initComponents();
 
-        CardLayout cardLayout = new CardLayout();
-        JPanel cardPanel = new JPanel(cardLayout);
-        intiCards(cardPanel, cardLayout);
+        this.layout = new CardLayout();
+        this.cardPanel = new JPanel(layout);
+        intiCards(cardPanel, layout);
         getContentPane().add(cardPanel);
-        
-        cardLayout.show(cardPanel, BROWSE_PANEL_ID);
+
+        layout.show(cardPanel, PanelIds.BROWSE_PANEL_ID);
         setVisible(true);
     }
 
@@ -38,7 +39,6 @@ public class MainFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Musical Ticketing System");
@@ -53,16 +53,20 @@ public class MainFrame extends javax.swing.JFrame {
 
         var browsePanel = new BrowsePane();
         browsePanel.setParentCallback(musicalId -> {
-            layout.show(cardPanel, MUSICAL_DETAILS_PANEL_ID);
+            layout.show(cardPanel, PanelIds.MUSICAL_DETAILS_PANEL_ID);
         });
 
-        cardPanel.add(browsePanel, BROWSE_PANEL_ID);
-        cardPanel.add(new MusicalDetailsPane(), MUSICAL_DETAILS_PANEL_ID);
+        cardPanel.add(browsePanel, PanelIds.BROWSE_PANEL_ID);
+        cardPanel.add(new MusicalDetailsPane(), PanelIds.MUSICAL_DETAILS_PANEL_ID);
     }
-
-    private final String BROWSE_PANEL_ID = "BROWSE_PANEL_ID";
-    private final String MUSICAL_DETAILS_PANEL_ID = "MUSICAL_DETAILS_PANEL_ID";
-
+    
+    public void showByPanelId(String panelId) {
+        layout.show(cardPanel, panelId);
+    }
+    
+    private final JPanel cardPanel;
+    private final CardLayout layout;
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

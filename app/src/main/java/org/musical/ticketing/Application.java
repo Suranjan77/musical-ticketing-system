@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.musical.ticketing.util.DBConnection;
+import org.musical.ticketing.util.MainFrameContext;
 import org.musical.ticketing.view.MainFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,6 @@ public class Application {
         throw new RuntimeException(e);
       }
     }
-    EventQueue.invokeLater(MainFrame::new);
+    EventQueue.invokeLater(() -> MainFrameContext.instance());
   }
 }
