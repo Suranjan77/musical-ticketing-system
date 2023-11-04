@@ -4,6 +4,7 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
+import org.musical.ticketing.view.models.CellData;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -20,13 +21,12 @@ import org.musical.ticketing.util.DateTimeUtils;
 public class CalendarPanel extends javax.swing.JPanel {
 
     private YearMonth currentYearMonth;
-    
+
     /**
      * Creates new form CalendarView
      */
     public CalendarPanel() {
         initComponents();
-        drawCalendar(YearMonth.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue()));
     }
 
     /**
@@ -41,8 +41,8 @@ public class CalendarPanel extends javax.swing.JPanel {
         setLayout(new java.awt.GridLayout(0, 7));
     }// </editor-fold>//GEN-END:initComponents
 
-
-    private void drawCalendar(YearMonth yearMonth) {
+    public void drawCalendar(Long musicalId, Long customerId, YearMonth yearMonth) {
+        removeAll();
         this.currentYearMonth = yearMonth;
         List<CalendarCell> calendarCells = new ArrayList<>();
 
@@ -51,19 +51,15 @@ public class CalendarPanel extends javax.swing.JPanel {
             var dayOfWeek = monthDates[0].getDayOfWeek().getValue(); //3
 
             for (int i = 0; i < 7; i++) {
-                calendarCells.add(new CalendarCell(new CellData(false, DayOfWeek.of(i + 1).getDisplayName(TextStyle.SHORT, Locale.UK), true, null, true, null)));
+                calendarCells.add(new CalendarCell(new CellData(false, DayOfWeek.of(i + 1).getDisplayName(TextStyle.SHORT, Locale.UK), true, null, true, customerId, musicalId)));
             }
 
             for (int i = 0; i < dayOfWeek - 1; i++) { //2
-                calendarCells.add(new CalendarCell(new CellData(false, "", false, null, true, null)));
+                calendarCells.add(new CalendarCell(new CellData(false, "", false, null, true, customerId, musicalId)));
             }
 
             for (var monthDate : monthDates) {
-                boolean shouldDisable = false;
-                if (monthDate.isBefore(LocalDate.now())) {
-                    shouldDisable = true;
-                }
-                calendarCells.add(new CalendarCell(new CellData(false, String.valueOf(monthDate.getDayOfMonth()), false, monthDate, shouldDisable, null)));
+                calendarCells.add(new CalendarCell(new CellData(monthDate.equals(LocalDate.now()), String.valueOf(monthDate.getDayOfMonth()), false, monthDate, monthDate.isBefore(LocalDate.now()), customerId, musicalId)));
             }
         }
 

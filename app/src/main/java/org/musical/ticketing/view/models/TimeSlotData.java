@@ -1,4 +1,4 @@
-package org.musical.ticketing.view.components.calendar;
+package org.musical.ticketing.view.models;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

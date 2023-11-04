@@ -4,7 +4,6 @@
  */
 package org.musical.ticketing.view.pages;
 
-import org.musical.ticketing.domain.Musical;
 import org.musical.ticketing.service.MusicalsService;
 import org.musical.ticketing.util.ErrorUtils;
 import org.musical.ticketing.view.components.BriefMusicalComponent;
@@ -46,7 +45,7 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
         setLayout(new java.awt.CardLayout());
 
         splittedPanel.setBackground(new java.awt.Color(255, 204, 204));
-        splittedPanel.setDividerLocation(450);
+        splittedPanel.setDividerLocation(500);
         splittedPanel.setDividerSize(1);
 
         musicalDescriptionSplitPanel.setDividerLocation(55);
@@ -54,6 +53,8 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
 
         backToSearchButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
         backToSearchButton.setText("<- Go Back to Search");
+        backToSearchButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        backToSearchButton.setMaximumSize(new java.awt.Dimension(5000, 27));
         backToSearchButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 backToSearchButtonMouseClicked(evt);
@@ -80,7 +81,7 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
         var musical = musicalsService.getMusicalById(musicalId);
         musical.ifPresentOrElse(m -> {
             musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(m, customerId, false));
-            splittedPanel.setRightComponent(new CalendarView(musicalId));
+            splittedPanel.setRightComponent(new CalendarView(musicalId, customerId));
         }, () -> ErrorUtils.showErrorPane("Musical not found for id: " + musicalId));
     }
 

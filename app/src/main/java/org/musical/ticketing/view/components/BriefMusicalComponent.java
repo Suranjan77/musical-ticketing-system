@@ -64,8 +64,8 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
 
         imageLabel = new javax.swing.JLabel();
         musicalTitleLabel = new javax.swing.JLabel();
-        musicalDurationLabel = new javax.swing.JLabel();
         theatreNameLabel = new javax.swing.JLabel();
+        musicalDurationLabel = new javax.swing.JLabel();
         musicalDescriptionScrollPane = new javax.swing.JScrollPane();
         descriptionTextPane = new javax.swing.JEditorPane();
 
@@ -93,6 +93,8 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         add(imageLabel, gridBagConstraints);
 
@@ -102,35 +104,43 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         add(musicalTitleLabel, gridBagConstraints);
-
-        musicalDurationLabel.setText("Duration: ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 205;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
-        add(musicalDurationLabel, gridBagConstraints);
 
         theatreNameLabel.setText("Show At: ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 206;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         add(theatreNameLabel, gridBagConstraints);
 
+        musicalDurationLabel.setText("Duration: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 10, 10);
+        add(musicalDurationLabel, gridBagConstraints);
+
+        musicalDescriptionScrollPane.setBorder(null);
+        musicalDescriptionScrollPane.setViewportView(null);
+
         descriptionTextPane.setContentType("text/html");
+        descriptionTextPane.setMinimumSize(new java.awt.Dimension(400, 300));
+        descriptionTextPane.setPreferredSize(new java.awt.Dimension(400, 300));
         musicalDescriptionScrollPane.setViewportView(descriptionTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         add(musicalDescriptionScrollPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 

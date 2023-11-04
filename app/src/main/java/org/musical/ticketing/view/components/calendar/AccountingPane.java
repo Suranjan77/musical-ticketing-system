@@ -4,9 +4,21 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
-import javax.swing.JButton;
-import org.musical.ticketing.util.MainFrameContext;
-import org.musical.ticketing.view.components.BriefMusicalComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JSpinner;
+import javax.swing.event.ChangeEvent;
+import javax.swing.text.DefaultFormatter;
+import org.musical.ticketing.domain.ShowTime;
+import org.musical.ticketing.domain.Ticket;
+import org.musical.ticketing.domain.TicketType;
+import org.musical.ticketing.domain.TicketTypeEnum;
+import org.musical.ticketing.repositories.ShowTimesRepository;
+import org.musical.ticketing.repositories.TicketTypeRepository;
+import org.musical.ticketing.repositories.TicketsRepository;
+import org.musical.ticketing.util.ErrorUtils;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.PurchaseEvent;
+import org.musical.ticketing.view.models.TicketAccountingData;
 
 /**
  *
@@ -14,11 +26,24 @@ import org.musical.ticketing.view.components.BriefMusicalComponent;
  */
 public class AccountingPane extends javax.swing.JPanel {
 
+    private final TicketTypeRepository ticketTypeRepository;
+    private final TicketsRepository ticketsRepository;
+    private final ShowTimesRepository showTimesRepository;
+    private ShowTime showTime;
+    private Long customerId;
+
     /**
      * Creates new form TotalCostPane
      */
     public AccountingPane() {
+        this.showTimesRepository = new ShowTimesRepository();
+        this.ticketTypeRepository = new TicketTypeRepository();
+        this.ticketsRepository = new TicketsRepository();
         initComponents();
+
+        ((DefaultFormatter) ((JFormattedTextField) adultTicketCountSpinner.getEditor().getComponent(0)).getFormatter()).setCommitsOnValidEdit(true);
+        ((DefaultFormatter) ((JFormattedTextField) seniorTicketCountSpinner.getEditor().getComponent(0)).getFormatter()).setCommitsOnValidEdit(true);
+        ((DefaultFormatter) ((JFormattedTextField) studentTicketCountSpinner.getEditor().getComponent(0)).getFormatter()).setCommitsOnValidEdit(true);
     }
 
     /**
@@ -58,7 +83,7 @@ public class AccountingPane extends javax.swing.JPanel {
 
         seatsRemainingCountLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
         seatsRemainingCountLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        seatsRemainingCountLabel.setText("2");
+        seatsRemainingCountLabel.setText("0");
         accountingPanel.add(seatsRemainingCountLabel);
 
         adultLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -99,7 +124,7 @@ public class AccountingPane extends javax.swing.JPanel {
 
         totalPriceLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
         totalPriceLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        totalPriceLabel.setText("£ 50");
+        totalPriceLabel.setText("£ 0");
         totalPriceLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         accountingPanel.add(totalPriceLabel);
 
@@ -135,16 +160,37 @@ public class AccountingPane extends javax.swing.JPanel {
     }//GEN-LAST:event_purchaseButtonActionPerformed
 
     private void purchaseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_purchaseButtonMouseClicked
-        
-//        MainFrameContext.instance().getRootFrame().renderReceipt();
-    }//GEN-LAST:event_purchaseButtonMouseClicked
+        int adultTicketCount = (int) adultTicketCountSpinner.getValue();
+        int seniorTicketCount = (int) seniorTicketCountSpinner.getValue();
+        int studentTicketCount = (int) studentTicketCountSpinner.getValue();
 
-    private Long musicalId;
-   
-    public void setMusicalId(Long musicalId) {
-        this.musicalId = musicalId;
-        
-    }
+        if (adultTicketCount + seniorTicketCount + studentTicketCount == 0) {
+            ErrorUtils.showErrorPane("Select at least 1 ticket to purchase");
+        } else if (showTime == null) {
+            ErrorUtils.showErrorPane("Select time first");
+        } else {
+
+            int seats = showTime.availableSeatsCount();
+            for (int i = 0; i < adultTicketCount; i++) {
+                var ticket = new Ticket(null, customerId, showTime.musicalId(), showTime.id(), seats--, adultTicketType.id());
+                ticketsRepository.save(ticket);
+            }
+
+            for (int i = 0; i < seniorTicketCount; i++) {
+                var ticket = new Ticket(null, customerId, showTime.musicalId(), showTime.id(), seats--, seniorTicketType.id());
+                ticketsRepository.save(ticket);
+            }
+
+            for (int i = 0; i < studentTicketCount; i++) {
+                var ticket = new Ticket(null, customerId, showTime.musicalId(), showTime.id(), seats--, studentTicketType.id());
+                ticketsRepository.save(ticket);
+            }
+
+            this.showTime = showTimesRepository.updateSeatCount(showTime.id(), seats);
+
+            ListenerRegistry.notify(new PurchaseEvent(showTime, customerId, new TicketAccountingData(adultTicketCount, seniorTicketCount, studentTicketCount, adultPrice, seniorPrice, studentPrice)));
+        }
+    }//GEN-LAST:event_purchaseButtonMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel accountingPanel;
@@ -161,4 +207,115 @@ public class AccountingPane extends javax.swing.JPanel {
     private javax.swing.JLabel totalLabel;
     private javax.swing.JLabel totalPriceLabel;
     // End of variables declaration//GEN-END:variables
+
+    void setSelectedTimeSlot(ShowTime showTime, Long customerId) {
+        this.showTime = showTime;
+        this.customerId = customerId;
+
+        Long musicalId = showTime.musicalId();
+
+        seatsRemainingCountLabel.setText(String.valueOf(showTime.availableSeatsCount()));
+
+        var adultTicketData = ticketTypeRepository.findByMusicalIdAndType(musicalId, TicketTypeEnum.ADULT);
+        var seniorTicketData = ticketTypeRepository.findByMusicalIdAndType(musicalId, TicketTypeEnum.SENIOR);
+        var studentTicketData = ticketTypeRepository.findByMusicalIdAndType(musicalId, TicketTypeEnum.STUDENT);
+
+        adultTicketData.ifPresent(a -> this.adultTicketType = a);
+        seniorTicketData.ifPresent(a -> this.seniorTicketType = a);
+        studentTicketData.ifPresent(a -> this.studentTicketType = a);
+
+        this.adultPrice = adultTicketData.isPresent() ? adultTicketData.get().price() : 0.0;
+        this.seniorPrice = seniorTicketData.isPresent() ? seniorTicketData.get().price() : 0.0;
+        this.studentPrice = studentTicketData.isPresent() ? studentTicketData.get().price() : 0.0;
+
+        adultTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
+            JSpinner source = (JSpinner) e.getSource();
+            int adultTicket = (int) source.getValue();
+            int seniorTicket = (int) seniorTicketCountSpinner.getValue();
+            int studentTicket = (int) studentTicketCountSpinner.getValue();
+
+            int newTotal = adultTicket + seniorTicket + studentTicket;
+
+            if (newTotal > showTime.availableSeatsCount()) {
+                ErrorUtils.showErrorPane("Seat count exceeded.");
+                adultTicketCountSpinner.setValue(adultTicket - 1);
+            } else {
+                int diff = newTotal - totalTicketCount;
+                int remainingSeats = showTime.availableSeatsCount() - diff;
+                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
+                this.totalTicketCount = newTotal;
+                this.adultCount = adultTicket;
+                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
+                totalPriceLabel.setText("£ " + total);
+            }
+
+        });
+
+        seniorTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
+            JSpinner source = (JSpinner) e.getSource();
+            int adultTicket = (int) adultTicketCountSpinner.getValue();
+            int seniorTicket = (int) source.getValue();
+            int studentTicket = (int) studentTicketCountSpinner.getValue();
+
+            int newTotal = adultTicket + seniorTicket + studentTicket;
+
+            if (newTotal > showTime.availableSeatsCount()) {
+                ErrorUtils.showErrorPane("Seat count exceeded.");
+                seniorTicketCountSpinner.setValue(seniorTicket - 1);
+            } else {
+                int diff = newTotal - totalTicketCount;
+                int remainingSeats = showTime.availableSeatsCount() - diff;
+                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
+                this.totalTicketCount = newTotal;
+                this.seniorCount = seniorTicket;
+                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
+                totalPriceLabel.setText("£ " + total);
+            }
+
+        });
+
+        studentTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
+            JSpinner source = (JSpinner) e.getSource();
+            int adultTicket = (int) adultTicketCountSpinner.getValue();
+            int seniorTicket = (int) seniorTicketCountSpinner.getValue();
+            int studentTicket = (int) source.getValue();
+            
+            int newTotal = adultTicket + seniorTicket + studentTicket;
+
+            if (newTotal > showTime.availableSeatsCount()) {
+                ErrorUtils.showErrorPane("Seat count exceeded.");
+                studentTicketCountSpinner.setValue(studentTicket - 1);
+            } else {
+                int diff = newTotal - totalTicketCount;
+                int remainingSeats = showTime.availableSeatsCount() - diff;
+                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
+                this.totalTicketCount = newTotal;
+                this.studentCount = studentTicket;
+                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
+                totalPriceLabel.setText("£ " + total);
+            }
+
+        });
+    }
+
+    private double calculateTotal(int adultTicket, int seniorTicket, int studentTicket) {
+        return adultTicket * adultPrice
+                + seniorTicket * seniorPrice
+                + studentTicket * studentPrice;
+    }
+
+    private int totalTicketCount;
+
+    private double adultCount;
+    private double seniorCount;
+    private double studentCount;
+
+    private double adultPrice;
+    private double seniorPrice;
+    private double studentPrice;
+
+    private TicketType adultTicketType;
+    private TicketType seniorTicketType;
+    private TicketType studentTicketType;
+
 }

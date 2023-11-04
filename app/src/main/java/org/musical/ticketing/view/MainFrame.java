@@ -15,10 +15,12 @@ import org.musical.ticketing.view.messaging.ListenerRegistry;
 import org.musical.ticketing.view.messaging.events.CustomerCreated;
 import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
 import org.musical.ticketing.view.messaging.events.PurchaseEvent;
+import org.musical.ticketing.view.messaging.events.StartOverEvent;
 import org.musical.ticketing.view.pages.BrowsePane;
 import org.musical.ticketing.view.pages.CustomerStartPanel;
 import org.musical.ticketing.view.pages.MusicalDetailsPane;
 import org.musical.ticketing.view.pages.ReceiptPanel;
+
 /**
  *
  * @author suranjanpoudel
@@ -33,8 +35,8 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
         initComponents();
 
         try {
-        UIManager.setLookAndFeel(new FlatLightLaf());
-        } catch(UnsupportedLookAndFeelException e) {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (UnsupportedLookAndFeelException e) {
 
         }
 
@@ -84,7 +86,6 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
         layout.show(cardPanel, panelId);
     }
 
-
     private final JPanel cardPanel;
     private final CardLayout layout;
     private final MusicalDetailsPane musicalDetailsPane;
@@ -94,7 +95,7 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
 
     @Override
     public void handleEvent(Object event) {
-        if(event instanceof CustomerCreated customerCreated) {
+        if (event instanceof CustomerCreated customerCreated) {
             showByPanelId(PanelIds.BROWSE_PANEL_ID);
             browsePanel.setCustomerId(customerCreated.customerId());
             browsePanel.render();
@@ -103,7 +104,9 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
             musicalDetailsPane.render(musicalClickedEvent.musicalId(), musicalClickedEvent.customerId());
         } else if (event instanceof PurchaseEvent purchaseEvent) {
             showByPanelId(PanelIds.RECEIPT_PANEL_ID);
-            receiptPanel.render(purchaseEvent.ticketDetailsData());
+            receiptPanel.render(purchaseEvent);
+        } else if (event instanceof StartOverEvent) {
+            showByPanelId(PanelIds.START_PANEL_ID);
         }
     }
 
@@ -111,6 +114,8 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
     public void register() {
         ListenerRegistry.register(CustomerCreated.class, this);
         ListenerRegistry.register(MusicalClickedEvent.class, this);
+        ListenerRegistry.register(PurchaseEvent.class, this);
+        ListenerRegistry.register(StartOverEvent.class, this);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

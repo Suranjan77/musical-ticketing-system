@@ -4,6 +4,12 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.CurrentYearMonthChanged;
+
 /**
  *
  * @author suranjanpoudel
@@ -37,6 +43,11 @@ public class CalendarControlsPanel extends javax.swing.JPanel {
         previousYearButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         previousYearButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         previousYearButton.setIconTextGap(10);
+        previousYearButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                previousYearButtonMouseClicked(evt);
+            }
+        });
         add(previousYearButton);
 
         previousMonthButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -44,6 +55,11 @@ public class CalendarControlsPanel extends javax.swing.JPanel {
         previousMonthButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         previousMonthButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         previousMonthButton.setIconTextGap(10);
+        previousMonthButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                previousMonthButtonMouseClicked(evt);
+            }
+        });
         add(previousMonthButton);
 
         yearMonthLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -58,6 +74,11 @@ public class CalendarControlsPanel extends javax.swing.JPanel {
         nextMonthButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         nextMonthButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nextMonthButton.setIconTextGap(10);
+        nextMonthButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nextMonthButtonMouseClicked(evt);
+            }
+        });
         add(nextMonthButton);
 
         nextYearButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -65,8 +86,33 @@ public class CalendarControlsPanel extends javax.swing.JPanel {
         nextYearButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         nextYearButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nextYearButton.setIconTextGap(10);
+        nextYearButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nextYearButtonMouseClicked(evt);
+            }
+        });
         add(nextYearButton);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void previousYearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousYearButtonMouseClicked
+        initControls(this.currentYearMonth.minusYears(1));
+        ListenerRegistry.notify(new CurrentYearMonthChanged(currentYearMonth));
+    }//GEN-LAST:event_previousYearButtonMouseClicked
+
+    private void previousMonthButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousMonthButtonMouseClicked
+        initControls(this.currentYearMonth.minusMonths(1));
+        ListenerRegistry.notify(new CurrentYearMonthChanged(currentYearMonth));
+    }//GEN-LAST:event_previousMonthButtonMouseClicked
+
+    private void nextMonthButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextMonthButtonMouseClicked
+        initControls(this.currentYearMonth.plusMonths(1));
+        ListenerRegistry.notify(new CurrentYearMonthChanged(currentYearMonth));
+    }//GEN-LAST:event_nextMonthButtonMouseClicked
+
+    private void nextYearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextYearButtonMouseClicked
+        initControls(this.currentYearMonth.plusYears(1));
+        ListenerRegistry.notify(new CurrentYearMonthChanged(currentYearMonth));
+    }//GEN-LAST:event_nextYearButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -76,4 +122,11 @@ public class CalendarControlsPanel extends javax.swing.JPanel {
     private javax.swing.JButton previousYearButton;
     private javax.swing.JLabel yearMonthLabel;
     // End of variables declaration//GEN-END:variables
+
+    private YearMonth currentYearMonth;
+
+    public void initControls(YearMonth now) {
+        this.currentYearMonth = now;
+        yearMonthLabel.setText(now.getMonth().getDisplayName(TextStyle.FULL, Locale.UK) + ", " + now.getYear());
+    }
 }

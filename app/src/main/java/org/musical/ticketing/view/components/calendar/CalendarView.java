@@ -4,22 +4,46 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
+import java.time.LocalDate;
+import org.musical.ticketing.view.models.CellData;
+import java.time.YearMonth;
+import java.util.List;
+import org.musical.ticketing.domain.ShowTime;
+import org.musical.ticketing.repositories.ShowTimesRepository;
+import org.musical.ticketing.view.messaging.EventListener;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.CalendarCellClicked;
+import org.musical.ticketing.view.messaging.events.CurrentYearMonthChanged;
+import org.musical.ticketing.view.messaging.events.TimeSlotSelected;
+
 /**
  *
  * @author suranjanpoudel
  */
-public class CalendarView extends javax.swing.JPanel {
+public class CalendarView extends javax.swing.JPanel implements EventListener {
 
     private final Long musicalId;
-    
+    private final Long customerId;
+
+    private final ShowTimesRepository showTimesRepository;
+
     /**
      * Creates new form CalendarView
+     *
      * @param musicalId
      */
-    public CalendarView(Long musicalId) {
+    public CalendarView(Long musicalId, Long customerId) {
+        register();
         initComponents();
         this.musicalId = musicalId;
-        accountingPane.setMusicalId(musicalId);
+        this.customerId = customerId;
+        this.showTimesRepository = new ShowTimesRepository();
+
+        calendarPane.drawCalendar(musicalId, customerId, YearMonth.now());
+        calendarControlsPanel.initControls(YearMonth.now());
+        
+        List<ShowTime> showTimes = showTimesRepository.findByMusicalIdForDate(musicalId, LocalDate.now());
+        ticketTimeSlotPlane.renderShowTimes(showTimes, LocalDate.now());
     }
 
     /**
@@ -37,9 +61,11 @@ public class CalendarView extends javax.swing.JPanel {
         ticketTimeSlotPlane = new org.musical.ticketing.view.components.calendar.TicketTimeSlotPlane();
         accountingPane = new org.musical.ticketing.view.components.calendar.AccountingPane();
 
+        setMinimumSize(new java.awt.Dimension(2, 2));
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.01;
@@ -48,22 +74,21 @@ public class CalendarView extends javax.swing.JPanel {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.4;
         gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
         add(calendarPane, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.05;
+        gridBagConstraints.weighty = 0.001;
         gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);
         add(ticketTimeSlotPlane, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weighty = 0.35;
+        gridBagConstraints.weighty = 0.2;
         add(accountingPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -74,4 +99,25 @@ public class CalendarView extends javax.swing.JPanel {
     private org.musical.ticketing.view.components.calendar.CalendarPanel calendarPane;
     private org.musical.ticketing.view.components.calendar.TicketTimeSlotPlane ticketTimeSlotPlane;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void handleEvent(Object event) {
+        if (event instanceof CalendarCellClicked calendarCellClicked) {
+            CellData data = calendarCellClicked.data();
+            List<ShowTime> showTimes = showTimesRepository.findByMusicalIdForDate(data.musicalId(), data.date());
+            ticketTimeSlotPlane.renderShowTimes(showTimes, data.date());
+        } else if (event instanceof TimeSlotSelected timeSlotSelected) {
+            var showTime = timeSlotSelected.showTime();
+            accountingPane.setSelectedTimeSlot(showTime, customerId);
+        } else if(event instanceof CurrentYearMonthChanged currentYearMonthChanged) {
+            calendarPane.drawCalendar(musicalId, customerId, currentYearMonthChanged.ym());
+        }
+    }
+
+    @Override
+    public void register() {
+        ListenerRegistry.register(CalendarCellClicked.class, this);
+        ListenerRegistry.register(TimeSlotSelected.class, this);
+        ListenerRegistry.register(CurrentYearMonthChanged.class, this);
+    }
 }

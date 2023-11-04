@@ -5,9 +5,14 @@
 package org.musical.ticketing.view.components.calendar;
 
 import java.awt.event.ItemEvent;
-import java.time.LocalTime;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.musical.ticketing.domain.ShowTime;
+import org.musical.ticketing.util.DateTimeUtils;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.TimeSlotSelected;
 
 /**
  *
@@ -15,17 +20,14 @@ import java.util.List;
  */
 public class TicketTimeSlotPlane extends javax.swing.JPanel {
 
+    private Map<String, ShowTime> itemToShowTimeMap = new HashMap<>();
+
     /**
      * Creates new form TicketTimeSlotPlane
      */
     public TicketTimeSlotPlane() {
         initComponents();
-
-        List<TimeSlotData> timeSlots = new ArrayList<>();
-        timeSlots.add(new TimeSlotData(0, LocalTime.now(), LocalTime.now().plusHours(1)));
-        timeSlots.add(new TimeSlotData(1, LocalTime.now().plusHours(2), LocalTime.now().plusHours(3)));
-        timeSlots.add(new TimeSlotData(2, LocalTime.now().plusHours(4), LocalTime.now().plusHours(5)));
-        renderTimeSlots(timeSlots);
+        chooseTimeComboBox.removeAllItems();
     }
 
     /**
@@ -37,34 +39,67 @@ public class TicketTimeSlotPlane extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        justSelectedLabel = new javax.swing.JLabel();
+        selectedDateLabel = new javax.swing.JLabel();
         chooseTimeLayout = new javax.swing.JLabel();
         chooseTimeComboBox = new javax.swing.JComboBox<>();
 
         setMaximumSize(new java.awt.Dimension(100, 70));
         setMinimumSize(new java.awt.Dimension(100, 70));
         setPreferredSize(new java.awt.Dimension(100, 70));
-        setLayout(new java.awt.GridLayout(1, 2));
+        setLayout(new java.awt.GridLayout());
 
-        chooseTimeLayout.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); // NOI18N
-        chooseTimeLayout.setText("  Choose a Time");
+        justSelectedLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        justSelectedLabel.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        justSelectedLabel.setText("Date: ");
+        add(justSelectedLabel);
+
+        selectedDateLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        selectedDateLabel.setForeground(new java.awt.Color(51, 0, 255));
+        add(selectedDateLabel);
+
+        chooseTimeLayout.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        chooseTimeLayout.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        chooseTimeLayout.setText("Time: ");
         add(chooseTimeLayout);
 
         chooseTimeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        chooseTimeComboBox.setMaximumSize(new java.awt.Dimension(32767, 25));
+        chooseTimeComboBox.setMinimumSize(new java.awt.Dimension(76, 25));
+        chooseTimeComboBox.setPreferredSize(new java.awt.Dimension(100, 25));
+        chooseTimeComboBox.setSize(new java.awt.Dimension(100, 25));
         add(chooseTimeComboBox);
     }// </editor-fold>//GEN-END:initComponents
 
-    public void renderTimeSlots(List<TimeSlotData> timeSlots) {
+    public void renderShowTimes(List<ShowTime> showTimes, LocalDate selectedDate) {
+        selectedDateLabel.setText(DateTimeUtils.formatPrintableDate(selectedDate));
         chooseTimeComboBox.removeAllItems();
-        timeSlots.forEach(slot -> chooseTimeComboBox.addItem(slot.formattedText()));
+        itemToShowTimeMap.clear();
+        showTimes.forEach(showTime -> {
+            var itemText = getShowTimeText(showTime);
+            chooseTimeComboBox.addItem(itemText);
+            itemToShowTimeMap.put(itemText, showTime);
+        });
         chooseTimeComboBox.addItemListener(this::timeSlotSelected);
     }
-    
+
+    private String getShowTimeText(ShowTime showTime) {
+        return DateTimeUtils.formatTime(showTime.startTime()) + "  --  " + DateTimeUtils.formatTime(showTime.endTime());
+    }
+
     private void timeSlotSelected(ItemEvent event) {
-        var selectedItem = event.getItem();
+        var selectedItem = (String) event.getItem();
+        var showTime = itemToShowTimeMap.get(selectedItem);
+        if(showTime != null) {
+            ListenerRegistry.notify(new TimeSlotSelected(showTime));
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> chooseTimeComboBox;
     private javax.swing.JLabel chooseTimeLayout;
+    private javax.swing.JLabel justSelectedLabel;
+    private javax.swing.JLabel selectedDateLabel;
     // End of variables declaration//GEN-END:variables
+
 }

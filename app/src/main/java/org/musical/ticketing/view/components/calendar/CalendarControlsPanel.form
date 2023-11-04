@@ -28,6 +28,9 @@
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="10"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="previousYearButtonMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="previousMonthButton">
       <Properties>
@@ -41,6 +44,9 @@
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="10"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="previousMonthButtonMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="yearMonthLabel">
       <Properties>
@@ -67,6 +73,9 @@
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="10"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nextMonthButtonMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="nextYearButton">
       <Properties>
@@ -80,6 +89,9 @@
         <Property name="horizontalTextPosition" type="int" value="0"/>
         <Property name="iconTextGap" type="int" value="10"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nextYearButtonMouseClicked"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

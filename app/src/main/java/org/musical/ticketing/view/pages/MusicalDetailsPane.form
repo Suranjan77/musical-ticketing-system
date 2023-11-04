@@ -21,7 +21,7 @@
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="cc" green="cc" red="ff" type="rgb"/>
         </Property>
-        <Property name="dividerLocation" type="int" value="450"/>
+        <Property name="dividerLocation" type="int" value="500"/>
         <Property name="dividerSize" type="int" value="1"/>
       </Properties>
       <Constraints>
@@ -51,6 +51,10 @@
                   <Font name=".AppleSystemUIFont" size="14" style="1"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="&lt;- Go Back to Search"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+                <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                  <Dimension value="[5000, 27]"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="backToSearchButtonMouseClicked"/>

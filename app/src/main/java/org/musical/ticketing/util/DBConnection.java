@@ -101,7 +101,7 @@ public class DBConnection {
       if (musicalWrapper.isPresent()) {
         Musical musical = musicalWrapper.get();
 
-        for (int j = 1; j < calculateForMonths; j++) {
+        for (int j = 0; j < calculateForMonths; j++) {
           var dates = localDatesPerMonth[j];
           for (var date : dates) {
             LocalTime startTime = LocalTime.of(9, 0, 0); // 9:00 AM

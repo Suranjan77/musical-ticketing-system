@@ -4,9 +4,23 @@
  */
 package org.musical.ticketing.view.pages;
 
-import org.musical.ticketing.view.components.TicketDetailsData;
+import java.awt.Graphics;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import javax.swing.JTextPane;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+import org.musical.ticketing.domain.ShowTime;
+import org.musical.ticketing.service.MusicalsService;
+import org.musical.ticketing.util.DateTimeUtils;
 import org.musical.ticketing.view.messaging.ListenerRegistry;
 import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
+import org.musical.ticketing.view.messaging.events.PurchaseEvent;
+import org.musical.ticketing.view.messaging.events.StartOverEvent;
+import org.musical.ticketing.view.models.TicketAccountingData;
 
 /**
  *
@@ -14,11 +28,20 @@ import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
  */
 public class ReceiptPanel extends javax.swing.JPanel {
 
+    private final MusicalsService musicalService;
+
     /**
      * Creates new form ReceiptPage
      */
     public ReceiptPanel() {
+        this.musicalService = new MusicalsService();
         initComponents();
+
+        receiptTextPane.setEditable(false);
+        StyledDocument doc = receiptTextPane.getStyledDocument();
+        SimpleAttributeSet center = new SimpleAttributeSet();
+        StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+        doc.setParagraphAttributes(0, doc.getLength(), center, false);
     }
 
     /**
@@ -33,14 +56,14 @@ public class ReceiptPanel extends javax.swing.JPanel {
 
         backButtonPanel = new javax.swing.JPanel();
         backToMusicalDescriptionButton = new javax.swing.JButton();
-        receiptTitleLabel = new javax.swing.JLabel();
+        startNewCustomerBtn = new javax.swing.JButton();
         printButton = new javax.swing.JButton();
-        receiptScroller = new javax.swing.JScrollPane();
-        receiptTextView = new javax.swing.JTextArea();
+        receiptScrollPane = new javax.swing.JScrollPane();
+        receiptTextPane = new javax.swing.JTextPane();
 
         setLayout(new java.awt.GridBagLayout());
 
-        backButtonPanel.setLayout(new java.awt.GridLayout(0, 3));
+        backButtonPanel.setLayout(new java.awt.GridLayout(0, 3, 10, 0));
 
         backToMusicalDescriptionButton.setText("<-- Back to Musical Details");
         backToMusicalDescriptionButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -51,12 +74,20 @@ public class ReceiptPanel extends javax.swing.JPanel {
         backToMusicalDescriptionButton.addActionListener(this::backToMusicalDescriptionButtonActionPerformed);
         backButtonPanel.add(backToMusicalDescriptionButton);
 
-        receiptTitleLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 18)); // NOI18N
-        receiptTitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        receiptTitleLabel.setText("Receipt");
-        backButtonPanel.add(receiptTitleLabel);
+        startNewCustomerBtn.setText("New Customer");
+        startNewCustomerBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                startNewCustomerBtnMouseClicked(evt);
+            }
+        });
+        backButtonPanel.add(startNewCustomerBtn);
 
         printButton.setText("Print");
+        printButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                printButtonMouseClicked(evt);
+            }
+        });
         printButton.addActionListener(this::printButtonActionPerformed);
         backButtonPanel.add(printButton);
 
@@ -68,17 +99,15 @@ public class ReceiptPanel extends javax.swing.JPanel {
         gridBagConstraints.weighty = 0.05;
         add(backButtonPanel, gridBagConstraints);
 
-        receiptTextView.setColumns(20);
-        receiptTextView.setRows(5);
-        receiptScroller.setViewportView(receiptTextView);
+        receiptTextPane.setEditable(false);
+        receiptTextPane.setContentType("text/html");
+        receiptScrollPane.setViewportView(receiptTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 0.95;
-        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 15);
-        add(receiptScroller, gridBagConstraints);
+        add(receiptScrollPane, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
@@ -90,22 +119,91 @@ public class ReceiptPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backToMusicalDescriptionButtonActionPerformed
 
     private void backToMusicalDescriptionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backToMusicalDescriptionButtonMouseClicked
-        ListenerRegistry.notify(new MusicalClickedEvent(data.musicalId(), data.customerId()));
+        ListenerRegistry.notify(new MusicalClickedEvent(showTime.musicalId(), customerId));
     }//GEN-LAST:event_backToMusicalDescriptionButtonMouseClicked
+
+    private void startNewCustomerBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startNewCustomerBtnMouseClicked
+        ListenerRegistry.notify(new StartOverEvent());
+    }//GEN-LAST:event_startNewCustomerBtnMouseClicked
+
+    private void printButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_printButtonMouseClicked
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(new TextPanePrintable(receiptTextPane));
+        if (job.printDialog()) {
+            try {
+                job.print();
+            } catch (PrinterException ignore) {
+
+            }
+        }
+
+        ListenerRegistry.notify(new StartOverEvent());
+    }//GEN-LAST:event_printButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backButtonPanel;
     private javax.swing.JButton backToMusicalDescriptionButton;
     private javax.swing.JButton printButton;
-    private javax.swing.JScrollPane receiptScroller;
-    private javax.swing.JTextArea receiptTextView;
-    private javax.swing.JLabel receiptTitleLabel;
+    private javax.swing.JScrollPane receiptScrollPane;
+    private javax.swing.JTextPane receiptTextPane;
+    private javax.swing.JButton startNewCustomerBtn;
     // End of variables declaration//GEN-END:variables
 
-    private TicketDetailsData data;
+    private ShowTime showTime;
+    private Long customerId;
+    private TicketAccountingData accountingData;
 
-    public void render(TicketDetailsData data) {
-        this.data = data;
+    public void render(PurchaseEvent purchaseEvent) {
+        this.showTime = purchaseEvent.showTime();
+        this.customerId = purchaseEvent.customerId();
+        this.accountingData = purchaseEvent.accountData();
+
+        double total = accountingData.adultCount() * accountingData.adultPrice()
+                + accountingData.seniorCount() * accountingData.seniorPrice()
+                + accountingData.studentCount() * accountingData.studentPrice();
+
+        var musical = musicalService.getMusicalById(showTime.musicalId());
+
+        String receiptHtml = "<html>"
+                + "<body> <br><br><br><center>"
+                + "<h1>" + musical.get().title() + "</h1>"
+                + "<p>Date: " + DateTimeUtils.formatPrintableDate(showTime.showDate()) + "</p>"
+                + "<p>Time: " + DateTimeUtils.formatTime(showTime.startTime()) + " to " + DateTimeUtils.formatTime(showTime.endTime()) + "</p>"
+                + "<div>"
+                + "<p>Adult Ticket (x" + accountingData.adultCount() + "): £ " + accountingData.adultCount() * accountingData.adultPrice() + "</p>"
+                + "<p>Senior Ticket (x" + accountingData.seniorCount() + "): £ " + accountingData.seniorCount() * accountingData.seniorPrice() + "</p>"
+                + "<p>Student Ticket (x" + accountingData.studentCount() + "): £ " + accountingData.studentCount() * accountingData.studentPrice() + "</p>"
+                + "<hr>"
+                + "<p>Total: £ " + total + "</p>"
+                + "</div> </center>"
+                + "</body>"
+                + "</html>";
+
+        receiptTextPane.setText(receiptHtml);
+    }
+
+    public static class TextPanePrintable implements Printable {
+
+        private JTextPane textPane;
+
+        public TextPanePrintable(JTextPane textPane) {
+            this.textPane = textPane;
+        }
+
+        @Override
+        public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
+            if (pageIndex > 0) {
+                return NO_SUCH_PAGE;
+            }
+
+            // Set the JTextPane size to match the page format
+            textPane.setSize((int) pageFormat.getImageableWidth(), (int) pageFormat.getImageableHeight());
+
+            // Paint the JTextPane content to the graphics context
+            textPane.print(g);
+
+            return PAGE_EXISTS;
+        }
     }
 }
