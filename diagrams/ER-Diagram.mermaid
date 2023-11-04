@@ -18,11 +18,12 @@ erDiagram
         date show_date
         time start_time
         time end_time "startTime + Musical.durationInSeconds"
-        int available_seats_count
+        int available_seats
     }
     Ticket_Types {
         bigint id PK
         varchar(255) name
+        bigint musical_id FK
         decimal price
     }
     Tickets {

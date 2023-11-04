@@ -18,7 +18,7 @@ public interface DomainRepository<T> {
 
     default T save(Domain<T> instance) {
         var query = "INSERT INTO " + instance.tableName()
-                + " (" + instance.getColumns().replace("id,", "").trim() + ")"
+                + " (" + instance.getColumns().substring(3).trim() + ")"
                 + "VALUES (" + instance.getInsertQueryPlaceHolders() + ")";
 
         try (var con = DBConnection.instance().getConnection(); PreparedStatement stmt = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {

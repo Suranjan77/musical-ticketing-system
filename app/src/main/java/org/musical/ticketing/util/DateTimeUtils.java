@@ -12,7 +12,7 @@ public class DateTimeUtils {
   public static LocalDate[] getDaysOfMonth(YearMonth ym) {
 
     LocalDate firstDayOfMonth = ym.atDay(1);
-    LocalDate nextMonthFirstDay = ym.atEndOfMonth().plus(1, ChronoUnit.DAYS);
+    LocalDate nextMonthFirstDay = ym.atEndOfMonth().plusDays(1);
 
     return firstDayOfMonth.datesUntil(nextMonthFirstDay).toArray(LocalDate[]::new);
   }

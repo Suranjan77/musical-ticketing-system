@@ -14,9 +14,11 @@ public class Application {
 
   public static void main(String[] args) {
     try {
-      DBConnection.instance().intiDb();
+      var connection = DBConnection.instance();
+      connection.intiDb();
+      connection.seedData();
     } catch (IOException | SQLException e) {
-      log.error("Failed to initialized database");
+      log.error("Failed to initialized database", e);
       throw new RuntimeException(e);
     }
     EventQueue.invokeLater(MainFrameContext::instance);

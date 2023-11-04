@@ -23,7 +23,7 @@ public record Musical(
     Duration duration = Duration.ofSeconds(durationInSeconds);
     long hours = duration.toHours();
     long minutes = duration.toMinutesPart();
-    long remainingSeconds = duration.minusHours(hours).toMinutesPart();
+    long remainingSeconds = duration.minusHours(hours).minusMinutes(minutes).toSeconds();
 
     return hours + " hrs, " + minutes + " min, and " + remainingSeconds + " sec";
   }

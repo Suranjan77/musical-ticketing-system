@@ -11,6 +11,8 @@ import org.musical.ticketing.view.messaging.EventListener;
 import org.musical.ticketing.view.messaging.ListenerRegistry;
 import org.musical.ticketing.view.messaging.events.MusicalSearchEvent;
 
+import java.util.List;
+
 /**
  * @author suranjanpoudel
  */
@@ -42,31 +44,27 @@ public class BrowseMusicalsPane extends javax.swing.JPanel implements EventListe
   } // </editor-fold>//GEN-END:initComponents
 
   public void showMusicals() {
-    for (long i = 0; i < 20; i++) {
-      var musicalComponent =
-          new BriefMusicalComponent(
-              new Musical(
-                  i, "Musical-" + i, "Musical-desc-" + i, "theatre-" + i, 5000L, "test_image.jpeg"),
-              customerId,
-              true);
-      add(musicalComponent);
-    }
+    var musicals = musicalsService.getAllMusicals();
+    showMusicals(musicals);
   }
 
   public void searchAndShowMusicals(String query) {
     this.removeAll();
     this.revalidate();
     this.repaint();
-   
-    var musicals = musicalsService
-        .searchMusicals(query);
-    
-    if(musicals.isEmpty()) {
-        JLabel label = new JLabel();
-        label.setText("No Musicals found for query: " + query);
-        add(label);
+
+    var musicals = musicalsService.searchMusicals(query);
+
+    showMusicals(musicals);
+  }
+
+  private void showMusicals(List<Musical> musicals) {
+    if (musicals.isEmpty()) {
+      JLabel label = new JLabel();
+      label.setText("No Musicals found");
+      add(label);
     } else {
-        musicals.forEach(musical -> add(new BriefMusicalComponent(musical, customerId,true)));
+      musicals.forEach(musical -> add(new BriefMusicalComponent(musical, customerId, true)));
     }
   }
 

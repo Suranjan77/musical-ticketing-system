@@ -25,7 +25,7 @@ public record ShowTime(
     return String.join(
         ",",
         List.of(
-            "id", "musical_id", "show_date", "start_time", "end_time", "available_seats_count"));
+            "id", "musical_id", "show_date", "start_time", "end_time", "available_seats"));
   }
 
   public ShowTime map(ResultSet rs) throws SQLException {

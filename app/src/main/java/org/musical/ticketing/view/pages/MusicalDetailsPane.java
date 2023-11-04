@@ -5,6 +5,8 @@
 package org.musical.ticketing.view.pages;
 
 import org.musical.ticketing.domain.Musical;
+import org.musical.ticketing.service.MusicalsService;
+import org.musical.ticketing.util.ErrorUtils;
 import org.musical.ticketing.view.components.BriefMusicalComponent;
 import org.musical.ticketing.view.components.calendar.CalendarView;
 import org.musical.ticketing.view.messaging.ListenerRegistry;
@@ -16,10 +18,13 @@ import org.musical.ticketing.view.messaging.events.CustomerCreated;
  */
 public class MusicalDetailsPane extends javax.swing.JPanel {
 
+    private final MusicalsService musicalsService;
+
     /**
      * Creates new form MusicalDetailsPane
      */
     public MusicalDetailsPane() {
+        this.musicalsService = new MusicalsService();
         initComponents();
 
         setVisible(true);
@@ -72,9 +77,11 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
 
     public void render(Long musicalId, Long customerId) {
         this.customerId = customerId;
-        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(new Musical(
-                musicalId, "Musical-" + musicalId, "Musical-desc-" + musicalId, "theatre-" + musicalId, 5000L, "test_image.jpeg"), customerId, false));
-        splittedPanel.setRightComponent(new CalendarView(musicalId));
+        var musical = musicalsService.getMusicalById(musicalId);
+        musical.ifPresentOrElse(m -> {
+            musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(m, customerId, false));
+            splittedPanel.setRightComponent(new CalendarView(musicalId));
+        }, () -> ErrorUtils.showErrorPane("Musical not found for id: " + musicalId));
     }
 
     private Long customerId;

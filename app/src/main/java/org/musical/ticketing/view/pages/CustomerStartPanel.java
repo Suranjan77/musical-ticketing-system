@@ -4,9 +4,9 @@
  */
 package org.musical.ticketing.view.pages;
 
-import javax.swing.JOptionPane;
 import org.musical.ticketing.domain.Customer;
 import org.musical.ticketing.service.CustomerService;
+import org.musical.ticketing.util.ErrorUtils;
 import org.musical.ticketing.view.messaging.ListenerRegistry;
 import org.musical.ticketing.view.messaging.events.CustomerCreated;
 
@@ -17,7 +17,7 @@ import org.musical.ticketing.view.messaging.events.CustomerCreated;
 public class CustomerStartPanel extends javax.swing.JPanel {
 
     private final CustomerService customerService;
-    
+
     /**
      * Creates new form CustomerStartPage
      */
@@ -76,27 +76,24 @@ public class CustomerStartPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void startCustomerBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startCustomerBtnMouseClicked
-    var customerPhoneNumber = phoneNumber.getText();
+        var customerPhoneNumber = phoneNumber.getText();
 
-    if (customerPhoneNumber.length() < 10 || customerPhoneNumber.length() > 11) {
-      JOptionPane.showMessageDialog(
-          null,
-          "Phone number must be of 10 digits or 11 digits including prefix 0",
-          "Error",
-          JOptionPane.ERROR_MESSAGE);
-    }
+        if (customerPhoneNumber.length() < 10 || customerPhoneNumber.length() > 11) {
+            ErrorUtils.showErrorPane(
+                    "Phone number must be of 10 digits or 11 digits including prefix 0");
+        } else {
+            try {
+                Long.valueOf(customerPhoneNumber);
 
-    try {
-      Long.valueOf(customerPhoneNumber);
-    } catch (NumberFormatException e) {
-      JOptionPane.showMessageDialog(
-          null, "Phone number invalid", "Error", JOptionPane.ERROR_MESSAGE);
-    }
+                var customer
+                        = customerService.createCustomer(new Customer(null, customerPhoneNumber));
 
-    var customer =
-        customerService.createCustomer(new Customer(null, customerPhoneNumber));
+                ListenerRegistry.notify(new CustomerCreated(customer.id()));
+            } catch (NumberFormatException e) {
+                ErrorUtils.showErrorPane("Phone number invalid");
+            }
+        }
 
-    ListenerRegistry.notify(new CustomerCreated(customer.id()));
 
     }//GEN-LAST:event_startCustomerBtnMouseClicked
 

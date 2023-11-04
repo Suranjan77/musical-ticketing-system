@@ -4,7 +4,6 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 import org.musical.ticketing.domain.Musical;
 import org.musical.ticketing.util.ImageUtils;
-import org.musical.ticketing.util.MainFrameContext;
 import org.musical.ticketing.view.messaging.ListenerRegistry;
 import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
 
@@ -19,8 +18,10 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
     private final boolean isBrowsing;
 
     /**
-     * Creates new form BriefMusicalComponent
+     * Creates new form BriefMusicalComponentØ
+     *
      * @param musical
+     * @param customerId
      * @param isBrowsing
      */
     public BriefMusicalComponent(Musical musical, Long customerId, boolean isBrowsing) {
@@ -33,20 +34,20 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
         if (image != null) {
             imageLabel.setIcon(new ImageIcon(image));
         }
-        
+
         musicalTitleLabel.setText(musical.title());
         musicalDurationLabel.setText(musical.durationToString());
         theatreNameLabel.setText(musical.theaterName());
-        
+
         if (isBrowsing) {
-            musicalDescriptionText.setEditable(false);
-            musicalDescriptionText.setEnabled(false);
-            musicalDescriptionText.setVisible(false);
+            descriptionTextPane.setEditable(false);
+            descriptionTextPane.setEnabled(false);
+            descriptionTextPane.setVisible(false);
             musicalDescriptionScrollPane.setVisible(false);
         } else {
-            musicalDescriptionText.setText(musical.description());
+            descriptionTextPane.setEditable(false);
+            descriptionTextPane.setText(musical.description());
         }
-        
 
         setVisible(true);
     }
@@ -66,10 +67,9 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
         musicalDurationLabel = new javax.swing.JLabel();
         theatreNameLabel = new javax.swing.JLabel();
         musicalDescriptionScrollPane = new javax.swing.JScrollPane();
-        musicalDescriptionText = new javax.swing.JTextArea();
+        descriptionTextPane = new javax.swing.JEditorPane();
 
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        setBounds(new java.awt.Rectangle(0, 0, 0, 0));
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         setMaximumSize(new java.awt.Dimension(3000, 3000));
         setMinimumSize(new java.awt.Dimension(280, 530));
@@ -123,9 +123,8 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         add(theatreNameLabel, gridBagConstraints);
 
-        musicalDescriptionText.setColumns(20);
-        musicalDescriptionText.setRows(5);
-        musicalDescriptionScrollPane.setViewportView(musicalDescriptionText);
+        descriptionTextPane.setContentType("text/html");
+        musicalDescriptionScrollPane.setViewportView(descriptionTextPane);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -151,13 +150,12 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JEditorPane descriptionTextPane;
     private javax.swing.JLabel imageLabel;
     private javax.swing.JScrollPane musicalDescriptionScrollPane;
-    private javax.swing.JTextArea musicalDescriptionText;
     private javax.swing.JLabel musicalDurationLabel;
     private javax.swing.JLabel musicalTitleLabel;
     private javax.swing.JLabel theatreNameLabel;
     // End of variables declaration//GEN-END:variables
-
 
 }

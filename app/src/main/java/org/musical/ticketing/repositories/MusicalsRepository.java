@@ -16,9 +16,9 @@ public class MusicalsRepository implements DomainRepository<Musical> {
             + emptyInstance.getColumns()
             + " FROM "
             + emptyInstance.tableName()
-            + " WHERE title LIKE '%"
+            + " WHERE LOWER(title) LIKE LOWER('%"
             + q
-            + "%'";
+            + "%')";
 
     try (var con = DBConnection.instance().getConnection();
         var stmt = con.createStatement()) {
