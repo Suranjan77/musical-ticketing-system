@@ -5,16 +5,15 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 
 /**
- *
  * @author suranjanpoudel
  */
 public class DateTimeUtils {
 
-    public static LocalDate[] getDaysOfMonth(YearMonth ym) {
+  public static LocalDate[] getDaysOfMonth(YearMonth ym) {
 
-        LocalDate firstDayOfMonth = ym.atDay(1);
-        LocalDate nextMonthFirstDay = ym.atEndOfMonth().plus(1, ChronoUnit.DAYS);
+    LocalDate firstDayOfMonth = ym.atDay(1);
+    LocalDate nextMonthFirstDay = ym.atEndOfMonth().plus(1, ChronoUnit.DAYS);
 
-        return firstDayOfMonth.datesUntil(nextMonthFirstDay).toArray(LocalDate[]::new);
-    }
+    return firstDayOfMonth.datesUntil(nextMonthFirstDay).toArray(LocalDate[]::new);
+  }
 }

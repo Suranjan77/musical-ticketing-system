@@ -4,6 +4,7 @@
  */
 package org.musical.ticketing.view.components;
 
+
 /**
  *
  * @author suranjanpoudel
@@ -31,7 +32,7 @@ public class SearchComponent extends javax.swing.JPanel {
         searchTextField = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(153, 153, 153));
+        setBackground(new java.awt.Color(102, 51, 0));
         setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

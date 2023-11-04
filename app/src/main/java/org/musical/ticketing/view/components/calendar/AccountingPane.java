@@ -4,6 +4,10 @@
  */
 package org.musical.ticketing.view.components.calendar;
 
+import javax.swing.JButton;
+import org.musical.ticketing.util.MainFrameContext;
+import org.musical.ticketing.view.components.BriefMusicalComponent;
+
 /**
  *
  * @author suranjanpoudel
@@ -37,13 +41,15 @@ public class AccountingPane extends javax.swing.JPanel {
         seniorTicketCountSpinner = new javax.swing.JSpinner();
         studentLabel = new javax.swing.JLabel();
         studentTicketCountSpinner = new javax.swing.JSpinner();
+        totalLabel = new javax.swing.JLabel();
+        totalPriceLabel = new javax.swing.JLabel();
         purchaseButton = new javax.swing.JButton();
 
         jLabel1.setText("jLabel1");
 
         setLayout(new java.awt.GridBagLayout());
 
-        accountingPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        accountingPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tickets", javax.swing.border.TitledBorder.LEADING, javax.swing.border.TitledBorder.ABOVE_TOP, new java.awt.Font(".AppleSystemUIFont", 1, 14))); // NOI18N
         accountingPanel.setLayout(new java.awt.GridLayout(0, 2, 0, 2));
 
         seatsRemainingLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
@@ -85,24 +91,41 @@ public class AccountingPane extends javax.swing.JPanel {
         studentTicketCountSpinner.setPreferredSize(new java.awt.Dimension(20, 22));
         accountingPanel.add(studentTicketCountSpinner);
 
+        totalLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        totalLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        totalLabel.setText("    Total Price");
+        totalLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        accountingPanel.add(totalLabel);
+
+        totalPriceLabel.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
+        totalPriceLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        totalPriceLabel.setText("£ 50");
+        totalPriceLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        accountingPanel.add(totalPriceLabel);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.weighty = 0.8;
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 0, 30);
         add(accountingPanel, gridBagConstraints);
 
         purchaseButton.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 14)); // NOI18N
         purchaseButton.setText("Purchase");
+        purchaseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                purchaseButtonMouseClicked(evt);
+            }
+        });
         purchaseButton.addActionListener(this::purchaseButtonActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.weighty = 0.2;
         gridBagConstraints.insets = new java.awt.Insets(10, 25, 0, 25);
         add(purchaseButton, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
@@ -111,6 +134,17 @@ public class AccountingPane extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_purchaseButtonActionPerformed
 
+    private void purchaseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_purchaseButtonMouseClicked
+        
+//        MainFrameContext.instance().getRootFrame().renderReceipt();
+    }//GEN-LAST:event_purchaseButtonMouseClicked
+
+    private Long musicalId;
+   
+    public void setMusicalId(Long musicalId) {
+        this.musicalId = musicalId;
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel accountingPanel;
@@ -124,5 +158,7 @@ public class AccountingPane extends javax.swing.JPanel {
     private javax.swing.JSpinner seniorTicketCountSpinner;
     private javax.swing.JLabel studentLabel;
     private javax.swing.JSpinner studentTicketCountSpinner;
+    private javax.swing.JLabel totalLabel;
+    private javax.swing.JLabel totalPriceLabel;
     // End of variables declaration//GEN-END:variables
 }

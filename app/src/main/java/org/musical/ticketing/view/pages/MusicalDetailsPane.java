@@ -4,10 +4,11 @@
  */
 package org.musical.ticketing.view.pages;
 
-import org.musical.ticketing.util.MainFrameContext;
-import org.musical.ticketing.util.PanelIds;
+import org.musical.ticketing.domain.Musical;
 import org.musical.ticketing.view.components.BriefMusicalComponent;
 import org.musical.ticketing.view.components.calendar.CalendarView;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.CustomerCreated;
 
 /**
  *
@@ -66,14 +67,16 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
     }//GEN-LAST:event_backToSearchButtonActionPerformed
 
     private void backToSearchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backToSearchButtonMouseClicked
-        var rootFrame = MainFrameContext.instance().getRootFrame();
-        rootFrame.showByPanelId(PanelIds.BROWSE_PANEL_ID);
+        ListenerRegistry.notify(new CustomerCreated(customerId));
     }//GEN-LAST:event_backToSearchButtonMouseClicked
 
-    public void renderDetails(Long musicalId) {
-        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(musicalId, false));
-        splittedPanel.setRightComponent(new CalendarView());
+    public void render(Long musicalId, Long customerId) {
+        this.customerId = customerId;
+        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(Musical.empty(), customerId,false));
+        splittedPanel.setRightComponent(new CalendarView(musicalId));
     }
+
+    private Long customerId;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backToSearchButton;

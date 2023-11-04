@@ -19,16 +19,8 @@ dependencies {
 
     implementation 'com.zaxxer:HikariCP:5.0.1'
     implementation 'org.apache.derby:derby:10.16.1.1'
-    implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'org.slf4j:slf4j-api:2.0.9'
-
-    // Use JUnit Jupiter for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    // This dependency is used by the application.
-    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.formdev:flatlaf:3.2.5'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

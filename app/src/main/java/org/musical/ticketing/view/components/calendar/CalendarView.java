@@ -10,11 +10,16 @@ package org.musical.ticketing.view.components.calendar;
  */
 public class CalendarView extends javax.swing.JPanel {
 
+    private final Long musicalId;
+    
     /**
      * Creates new form CalendarView
+     * @param musicalId
      */
-    public CalendarView() {
+    public CalendarView(Long musicalId) {
         initComponents();
+        this.musicalId = musicalId;
+        accountingPane.setMusicalId(musicalId);
     }
 
     /**
@@ -49,7 +54,7 @@ public class CalendarView extends javax.swing.JPanel {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.05;
         gridBagConstraints.insets = new java.awt.Insets(0, 15, 0, 15);

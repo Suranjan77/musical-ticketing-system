@@ -1,52 +1,41 @@
 
 erDiagram
-    Musical {
-        int id PK
+    Customers {
+        bigint id PK
+        bigint phone_number UK
+    }
+    Musicals {
+        bigint id PK
         varchar(255) title
         text description
-        varchar(255) theatreName
-        bigint durationInSeconds
-        varchar(255) thumbnailImageUrl
+        varchar(255) theatre_name
+        bigint duration_in_seconds
+        varchar(255) thumbnail_image_url
     }
-    MusicalPricing {
-        int id PK
-        int musicalId FK
-        TicketType type
+    ShowTimes {
+        bigint id PK
+        bigint musical_id FK
+        date show_date
+        time start_time
+        time end_time "startTime + Musical.durationInSeconds"
+        int available_seats_count
+    }
+    Ticket_Types {
+        bigint id PK
+        varchar(255) name
         decimal price
     }
-    ShowTime {
-        int id PK
-        int musicalId FK
-        date date
-        time startTime
-        time endTime "startTime + Musical.durationInSeconds"
-        int seats
-    }
-    Ticket {
-        int id PK
-        int showTimeId FK
-        TicketType type
-        decimal price
-        int seatNumber "seatNumber <= ShowTime.seats"
-    }
-    Transaction {
-        int id PK
-        int numberOfTickets
-        decimal totalPrice
-        int musicalId FK
-        int userId FK
-        int[] ticketIds
-    }
-    User {
-        int id PK
-        varchar(255) email
-        varchar(255) password
-        UserRole role
+    Tickets {
+        bigint id PK
+        bigint customer_id FK
+        bigint musical_id
+        bigint showtime_id
+        int seat_number
+        bigint ticket_type_id
     }
 
-    Transaction }|--|{ Ticket: contains
-    Transaction o|--|| Musical: contains
-    Musical ||--|{ MusicalPricing: has
-    Musical ||--|{ ShowTime: has
-    ShowTime ||--o{ Ticket: has
-    User }|--|{ Ticket: purchases
+    Musicals ||--o{ ShowTimes : is_scheduled_for
+
+    Customers }|--o{ Tickets : purchases
+    Tickets ||--|| ShowTimes : is_for
+    Tickets ||--|{ Ticket_Types : has

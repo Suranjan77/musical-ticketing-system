@@ -4,33 +4,58 @@
  */
 package org.musical.ticketing.view;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.CardLayout;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.musical.ticketing.util.PanelIds;
+import org.musical.ticketing.view.messaging.EventListener;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.CustomerCreated;
+import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
+import org.musical.ticketing.view.messaging.events.PurchaseEvent;
 import org.musical.ticketing.view.pages.BrowsePane;
+import org.musical.ticketing.view.pages.CustomerStartPanel;
 import org.musical.ticketing.view.pages.MusicalDetailsPane;
-
+import org.musical.ticketing.view.pages.ReceiptPanel;
 /**
  *
  * @author suranjanpoudel
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements EventListener {
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+        register();
         initComponents();
+
+        try {
+        UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch(UnsupportedLookAndFeelException e) {
+
+        }
+
+        UIManager.LookAndFeelInfo[] looks = UIManager.getInstalledLookAndFeels();
+        for (UIManager.LookAndFeelInfo look : looks) {
+            System.out.println(look.getClassName());
+        }
 
         this.layout = new CardLayout();
         this.cardPanel = new JPanel(layout);
-        
-        this.musicalDetailsPane = new MusicalDetailsPane();
-        
-        intiCards(cardPanel, layout);
-        getContentPane().add(cardPanel);
 
+        this.musicalDetailsPane = new MusicalDetailsPane();
+        this.receiptPanel = new ReceiptPanel();
+        this.customerStartPage = new CustomerStartPanel();
+        this.browsePanel = new BrowsePane();
+
+        intiCards(cardPanel);
+
+        getContentPane().add(cardPanel);
         layout.show(cardPanel, PanelIds.BROWSE_PANEL_ID);
+
         setVisible(true);
     }
 
@@ -52,30 +77,47 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void intiCards(JPanel cardPanel, CardLayout layout) {
-
-        var browsePanel = new BrowsePane();
-        browsePanel.setParentCallback(musicalId -> {
-            layout.show(cardPanel, PanelIds.MUSICAL_DETAILS_PANEL_ID);
-        });
-
-        cardPanel.add(browsePanel, PanelIds.BROWSE_PANEL_ID);
+    private void intiCards(JPanel cardPanel) {
+        cardPanel.add(this.browsePanel, PanelIds.BROWSE_PANEL_ID);
         cardPanel.add(this.musicalDetailsPane, PanelIds.MUSICAL_DETAILS_PANEL_ID);
+        cardPanel.add(this.receiptPanel, PanelIds.RECEIPT_PANEL_ID);
+        cardPanel.add(this.customerStartPage, PanelIds.START_PANEL_ID);
+
     }
-    
-    public void showByPanelId(String panelId) {
+
+    private void showByPanelId(String panelId) {
         layout.show(cardPanel, panelId);
     }
-    
-    public void renderMusicalDetails(Long musicalId) {
-        showByPanelId(PanelIds.MUSICAL_DETAILS_PANEL_ID);
-        this.musicalDetailsPane.renderDetails(musicalId);
-    }
-    
+
+
     private final JPanel cardPanel;
     private final CardLayout layout;
     private final MusicalDetailsPane musicalDetailsPane;
-    
+    private final ReceiptPanel receiptPanel;
+    private final CustomerStartPanel customerStartPage;
+    private final BrowsePane browsePanel;
+
+    @Override
+    public void handleEvent(Object event) {
+        if(event instanceof CustomerCreated customerCreated) {
+            showByPanelId(PanelIds.BROWSE_PANEL_ID);
+            browsePanel.setCustomerId(customerCreated.customerId());
+            browsePanel.render();
+        } else if (event instanceof MusicalClickedEvent musicalClickedEvent) {
+            showByPanelId(PanelIds.MUSICAL_DETAILS_PANEL_ID);
+            musicalDetailsPane.render(musicalClickedEvent.musicalId(), musicalClickedEvent.customerId());
+        } else if (event instanceof PurchaseEvent purchaseEvent) {
+            showByPanelId(PanelIds.RECEIPT_PANEL_ID);
+            receiptPanel.render(purchaseEvent.ticketDetailsData());
+        }
+    }
+
+    @Override
+    public void register() {
+        ListenerRegistry.register(CustomerCreated.class, this);
+        ListenerRegistry.register(MusicalClickedEvent.class, this);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

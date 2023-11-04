@@ -1,6 +1,5 @@
 package org.musical.ticketing.view.pages;
 
-import java.util.function.Consumer;
 import javax.swing.JScrollPane;
 import org.musical.ticketing.view.components.BrowseMusicalsPane;
 import org.musical.ticketing.view.components.SearchComponent;
@@ -20,8 +19,6 @@ public class BrowsePane extends javax.swing.JPanel {
      */
     public BrowsePane() {
         initComponents();
-        browseSplitPane.setTopComponent(new SearchComponent());
-
         setVisible(true);
     }
 
@@ -44,20 +41,33 @@ public class BrowsePane extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(browseSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(browseSplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(browseSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(browseSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 461, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void setParentCallback(Consumer<Long> callback) {
-        var browseMusicalPane = new BrowseMusicalsPane();
-        browseMusicalPane.setParentCallback(callback);
-        browseSplitPane.setBottomComponent(new JScrollPane(browseMusicalPane));
+    public void render() {
+        var browseMusicalsPane = new BrowseMusicalsPane(customerId);
+
+        var scrollPane = new JScrollPane(browseMusicalsPane);
+        browseSplitPane.setBottomComponent(scrollPane);
+
+        var searchComponent =  new SearchComponent();
+
+        browseSplitPane.setTopComponent(searchComponent);
+
+        browseMusicalsPane.showMusicals();
     }
 
+    private Long customerId;
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSplitPane browseSplitPane;
     // End of variables declaration//GEN-END:variables

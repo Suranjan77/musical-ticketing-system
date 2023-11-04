@@ -1,10 +1,12 @@
 package org.musical.ticketing.view.components;
 
 import java.awt.Color;
-import java.util.function.Consumer;
 import javax.swing.ImageIcon;
+import org.musical.ticketing.domain.Musical;
 import org.musical.ticketing.util.ImageUtils;
 import org.musical.ticketing.util.MainFrameContext;
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.MusicalClickedEvent;
 
 /**
  *
@@ -13,27 +15,38 @@ import org.musical.ticketing.util.MainFrameContext;
 public class BriefMusicalComponent extends javax.swing.JPanel {
 
     private final Long musicalId;
+    private final Long customerId;
     private final boolean isBrowsing;
 
     /**
      * Creates new form BriefMusicalComponent
+     * @param musical
+     * @param isBrowsing
      */
-    public BriefMusicalComponent(Long musicalId, boolean isBrowsing) {
-        this.musicalId = musicalId;
+    public BriefMusicalComponent(Musical musical, Long customerId, boolean isBrowsing) {
+        this.musicalId = musical.id();
+        this.customerId = customerId;
         this.isBrowsing = isBrowsing;
         initComponents();
 
-        var image = ImageUtils.getImage("test_image.jpeg");
+        var image = ImageUtils.getImage(musical.thumbnailImageUrl());
         if (image != null) {
             imageLabel.setIcon(new ImageIcon(image));
         }
-
+        
+        musicalTitleLabel.setText(musical.title());
+        musicalDurationLabel.setText(musical.durationToString());
+        theatreNameLabel.setText(musical.theaterName());
+        
         if (isBrowsing) {
             musicalDescriptionText.setEditable(false);
             musicalDescriptionText.setEnabled(false);
             musicalDescriptionText.setVisible(false);
             musicalDescriptionScrollPane.setVisible(false);
+        } else {
+            musicalDescriptionText.setText(musical.description());
         }
+        
 
         setVisible(true);
     }
@@ -132,8 +145,7 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         if (isBrowsing) {
-            Long musicalId = ((BriefMusicalComponent) evt.getSource()).getMusicalId();
-            MainFrameContext.instance().getRootFrame().renderMusicalDetails(musicalId);
+            ListenerRegistry.notify(new MusicalClickedEvent(musicalId, customerId));
         }
     }//GEN-LAST:event_formMouseClicked
 
@@ -147,14 +159,5 @@ public class BriefMusicalComponent extends javax.swing.JPanel {
     private javax.swing.JLabel theatreNameLabel;
     // End of variables declaration//GEN-END:variables
 
-    public Long getMusicalId() {
-        return musicalId;
-    }
-
-    private Consumer<Long> callback;
-
-    public void setParentCallback(Consumer<Long> callback) {
-        this.callback = callback;
-    }
 
 }
