@@ -38,11 +38,6 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
 
         }
 
-        UIManager.LookAndFeelInfo[] looks = UIManager.getInstalledLookAndFeels();
-        for (UIManager.LookAndFeelInfo look : looks) {
-            System.out.println(look.getClassName());
-        }
-
         this.layout = new CardLayout();
         this.cardPanel = new JPanel(layout);
 
@@ -54,7 +49,7 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
         intiCards(cardPanel);
 
         getContentPane().add(cardPanel);
-        layout.show(cardPanel, PanelIds.BROWSE_PANEL_ID);
+        layout.show(cardPanel, PanelIds.START_PANEL_ID);
 
         setVisible(true);
     }

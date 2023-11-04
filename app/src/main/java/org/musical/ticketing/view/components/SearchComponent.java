@@ -4,6 +4,9 @@
  */
 package org.musical.ticketing.view.components;
 
+import org.musical.ticketing.view.messaging.ListenerRegistry;
+import org.musical.ticketing.view.messaging.events.MusicalSearchEvent;
+
 
 /**
  *
@@ -44,6 +47,11 @@ public class SearchComponent extends javax.swing.JPanel {
         add(searchTextField, gridBagConstraints);
 
         searchButton.setText("Search");
+        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                searchButtonMouseClicked(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -52,6 +60,11 @@ public class SearchComponent extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
         add(searchButton, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void searchButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchButtonMouseClicked
+        var query = searchTextField.getText();
+        ListenerRegistry.notify(new MusicalSearchEvent(query));
+    }//GEN-LAST:event_searchButtonMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

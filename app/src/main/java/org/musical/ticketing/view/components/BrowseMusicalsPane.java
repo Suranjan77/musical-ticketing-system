@@ -4,6 +4,7 @@
  */
 package org.musical.ticketing.view.components;
 
+import javax.swing.JLabel;
 import org.musical.ticketing.domain.Musical;
 import org.musical.ticketing.service.MusicalsService;
 import org.musical.ticketing.view.messaging.EventListener;
@@ -20,6 +21,7 @@ public class BrowseMusicalsPane extends javax.swing.JPanel implements EventListe
 
   /** Creates new form BrowseMusicalsPane */
   public BrowseMusicalsPane(Long customerId) {
+    register();
     initComponents();
     this.musicalsService = new MusicalsService();
     this.customerId = customerId;
@@ -52,10 +54,20 @@ public class BrowseMusicalsPane extends javax.swing.JPanel implements EventListe
   }
 
   public void searchAndShowMusicals(String query) {
-    removeAll();
-    musicalsService
-        .searchMusicals(query)
-        .forEach(musical -> add(new BriefMusicalComponent(musical, customerId,true)));
+    this.removeAll();
+    this.revalidate();
+    this.repaint();
+   
+    var musicals = musicalsService
+        .searchMusicals(query);
+    
+    if(musicals.isEmpty()) {
+        JLabel label = new JLabel();
+        label.setText("No Musicals found for query: " + query);
+        add(label);
+    } else {
+        musicals.forEach(musical -> add(new BriefMusicalComponent(musical, customerId,true)));
+    }
   }
 
     @Override

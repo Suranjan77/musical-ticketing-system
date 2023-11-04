@@ -9,7 +9,7 @@ CREATE TABLE musicals
     id                  INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title               VARCHAR(255),
     description         LONG VARCHAR,
-    theatre_name        VARCHAR(255),
+    theater_name        VARCHAR(255),
     thumbnail_image_url VARCHAR(255),
     duration_in_seconds INT
 );

@@ -21,6 +21,9 @@ public class MusicalsService {
   }
 
   public List<Musical> searchMusicals(String query) {
+      if(query.isEmpty()) {
+          return getAllMusicals();
+      }
     return musicalsRepository.search(query);
   }
 }

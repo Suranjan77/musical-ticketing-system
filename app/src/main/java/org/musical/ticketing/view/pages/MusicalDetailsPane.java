@@ -72,7 +72,8 @@ public class MusicalDetailsPane extends javax.swing.JPanel {
 
     public void render(Long musicalId, Long customerId) {
         this.customerId = customerId;
-        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(Musical.empty(), customerId,false));
+        musicalDescriptionSplitPanel.setBottomComponent(new BriefMusicalComponent(new Musical(
+                musicalId, "Musical-" + musicalId, "Musical-desc-" + musicalId, "theatre-" + musicalId, 5000L, "test_image.jpeg"), customerId, false));
         splittedPanel.setRightComponent(new CalendarView(musicalId));
     }
 
