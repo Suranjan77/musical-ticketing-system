@@ -5,8 +5,7 @@
 package org.musical.ticketing.view.components.calendar;
 
 import javax.swing.JFormattedTextField;
-import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
+import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultFormatter;
 import org.musical.ticketing.domain.ShowTime;
 import org.musical.ticketing.domain.Ticket;
@@ -188,7 +187,18 @@ public class AccountingPane extends javax.swing.JPanel {
 
             this.showTime = showTimesRepository.updateSeatCount(showTime.id(), seats);
 
-            ListenerRegistry.notify(new PurchaseEvent(showTime, customerId, new TicketAccountingData(adultTicketCount, seniorTicketCount, studentTicketCount, adultPrice, seniorPrice, studentPrice)));
+            ListenerRegistry.notify(new PurchaseEvent(
+                    showTime,
+                    customerId,
+                    new TicketAccountingData(
+                            adultTicketCount,
+                            seniorTicketCount,
+                            studentTicketCount,
+                            adultTicketType.price(),
+                            seniorTicketType.price(),
+                            studentTicketType.price()
+                    )
+            ));
         }
     }//GEN-LAST:event_purchaseButtonMouseClicked
 
@@ -224,98 +234,69 @@ public class AccountingPane extends javax.swing.JPanel {
         seniorTicketData.ifPresent(a -> this.seniorTicketType = a);
         studentTicketData.ifPresent(a -> this.studentTicketType = a);
 
-        this.adultPrice = adultTicketData.isPresent() ? adultTicketData.get().price() : 0.0;
-        this.seniorPrice = seniorTicketData.isPresent() ? seniorTicketData.get().price() : 0.0;
-        this.studentPrice = studentTicketData.isPresent() ? studentTicketData.get().price() : 0.0;
-
-        adultTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
-            JSpinner source = (JSpinner) e.getSource();
-            int adultTicket = (int) source.getValue();
-            int seniorTicket = (int) seniorTicketCountSpinner.getValue();
-            int studentTicket = (int) studentTicketCountSpinner.getValue();
-
-            int newTotal = adultTicket + seniorTicket + studentTicket;
-
-            if (newTotal > showTime.availableSeatsCount()) {
-                ErrorUtils.showErrorPane("Seat count exceeded.");
-                adultTicketCountSpinner.setValue(adultTicket - 1);
-            } else {
-                int diff = newTotal - totalTicketCount;
-                int remainingSeats = showTime.availableSeatsCount() - diff;
-                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
-                this.totalTicketCount = newTotal;
-                this.adultCount = adultTicket;
-                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
-                totalPriceLabel.setText("£ " + total);
-            }
-
-        });
-
-        seniorTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
-            JSpinner source = (JSpinner) e.getSource();
-            int adultTicket = (int) adultTicketCountSpinner.getValue();
-            int seniorTicket = (int) source.getValue();
-            int studentTicket = (int) studentTicketCountSpinner.getValue();
-
-            int newTotal = adultTicket + seniorTicket + studentTicket;
-
-            if (newTotal > showTime.availableSeatsCount()) {
-                ErrorUtils.showErrorPane("Seat count exceeded.");
-                seniorTicketCountSpinner.setValue(seniorTicket - 1);
-            } else {
-                int diff = newTotal - totalTicketCount;
-                int remainingSeats = showTime.availableSeatsCount() - diff;
-                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
-                this.totalTicketCount = newTotal;
-                this.seniorCount = seniorTicket;
-                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
-                totalPriceLabel.setText("£ " + total);
-            }
-
-        });
-
-        studentTicketCountSpinner.addChangeListener((ChangeEvent e) -> {
-            JSpinner source = (JSpinner) e.getSource();
-            int adultTicket = (int) adultTicketCountSpinner.getValue();
-            int seniorTicket = (int) seniorTicketCountSpinner.getValue();
-            int studentTicket = (int) source.getValue();
-            
-            int newTotal = adultTicket + seniorTicket + studentTicket;
-
-            if (newTotal > showTime.availableSeatsCount()) {
-                ErrorUtils.showErrorPane("Seat count exceeded.");
-                studentTicketCountSpinner.setValue(studentTicket - 1);
-            } else {
-                int diff = newTotal - totalTicketCount;
-                int remainingSeats = showTime.availableSeatsCount() - diff;
-                seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
-                this.totalTicketCount = newTotal;
-                this.studentCount = studentTicket;
-                var total = calculateTotal(adultTicket, seniorTicket, studentTicket);
-                totalPriceLabel.setText("£ " + total);
-            }
-
-        });
+        adultTicketCountSpinner.addChangeListener(e -> updateTicketCountAndPrice(true, false, false));
+        seniorTicketCountSpinner.addChangeListener(e -> updateTicketCountAndPrice(false, true, false));
+        studentTicketCountSpinner.addChangeListener(e -> updateTicketCountAndPrice(false, false, true));
     }
-
-    private double calculateTotal(int adultTicket, int seniorTicket, int studentTicket) {
-        return adultTicket * adultPrice
-                + seniorTicket * seniorPrice
-                + studentTicket * studentPrice;
-    }
-
-    private int totalTicketCount;
-
-    private double adultCount;
-    private double seniorCount;
-    private double studentCount;
-
-    private double adultPrice;
-    private double seniorPrice;
-    private double studentPrice;
 
     private TicketType adultTicketType;
     private TicketType seniorTicketType;
     private TicketType studentTicketType;
+
+    private boolean isShowingError;
+    private int lastValidAdultTicketCount = 0;
+    private int lastValidSeniorTicketCount = 0;
+    private int lastValidStudentTicketCount = 0;
+
+    private void updateTicketCountAndPrice(boolean isAdultTicket, boolean isSeniorTicket, boolean isStudentTicket) {
+
+        if (isShowingError) {
+            return; // Prevent multiple error panes from showing up at once
+        }
+
+        int adultTicket = (int) adultTicketCountSpinner.getValue();
+        int seniorTicket = (int) seniorTicketCountSpinner.getValue();
+        int studentTicket = (int) studentTicketCountSpinner.getValue();
+
+        int totalTickets = adultTicket + seniorTicket + studentTicket;
+
+        if (totalTickets > showTime.availableSeatsCount()) {
+            if (!isShowingError) {
+                isShowingError = true;
+                ErrorUtils.showErrorPane("Seat count exceeded.");
+                if (isAdultTicket) {
+                    SwingUtilities.invokeLater(() -> {
+                        adultTicketCountSpinner.setValue(adultTicket - 1);
+                        isShowingError = false;
+                    });
+                }
+                if (isSeniorTicket) {
+                    SwingUtilities.invokeLater(() -> {
+                        seniorTicketCountSpinner.setValue(seniorTicket - 1);
+                        isShowingError = false;
+                    });
+                }
+                if (isStudentTicket) {
+                    SwingUtilities.invokeLater(() -> {
+                        studentTicketCountSpinner.setValue(studentTicket - 1);
+                        isShowingError = false;
+                    });
+                }
+            }
+        } else {
+            lastValidAdultTicketCount = adultTicket;
+            lastValidSeniorTicketCount = seniorTicket;
+            lastValidStudentTicketCount = studentTicket;
+
+            int remainingSeats = showTime.availableSeatsCount() - totalTickets;
+            seatsRemainingCountLabel.setText(String.valueOf(remainingSeats));
+
+            double total = adultTicket * adultTicketType.price()
+                    + seniorTicket * seniorTicketType.price()
+                    + studentTicket * studentTicketType.price();
+
+            totalPriceLabel.setText("£ " + total);
+        }
+    }
 
 }

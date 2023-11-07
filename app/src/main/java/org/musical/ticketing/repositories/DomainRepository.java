@@ -33,7 +33,7 @@ public interface DomainRepository<T> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Failed to save data", e);
+            e.printStackTrace();
         }
 
         return null;

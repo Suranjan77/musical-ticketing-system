@@ -21,6 +21,7 @@ public record ShowTime(
     return new ShowTime(null, null, null, null, null, null);
   }
 
+  @Override
   public String getColumns() {
     return String.join(
         ",",
@@ -28,6 +29,7 @@ public record ShowTime(
             "id", "musical_id", "show_date", "start_time", "end_time", "available_seats"));
   }
 
+  @Override
   public ShowTime map(ResultSet rs) throws SQLException {
     return new ShowTime(
         rs.getLong(1),

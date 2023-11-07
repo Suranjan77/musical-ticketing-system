@@ -28,6 +28,7 @@ public record Musical(
     return hours + " hrs, " + minutes + " min, and " + remainingSeconds + " sec";
   }
 
+  @Override
   public String getColumns() {
     return String.join(
         ",",
@@ -40,6 +41,7 @@ public record Musical(
             "thumbnail_image_url"));
   }
 
+  @Override
   public Musical map(ResultSet rs) throws SQLException {
     return new Musical(
         rs.getLong(1),

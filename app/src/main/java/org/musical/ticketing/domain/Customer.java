@@ -10,10 +10,12 @@ public record Customer(Long id, String phoneNumber) implements Domain<Customer> 
     return new Customer(null, null);
   }
 
+  @Override
   public String getColumns() {
     return String.join(",", List.of("id", "phone_number"));
   }
 
+  @Override
   public Customer map(ResultSet rs) throws SQLException {
     return new Customer(rs.getLong(1), rs.getString(2));
   }
