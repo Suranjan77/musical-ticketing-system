@@ -49,6 +49,8 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
         this.browsePanel = new BrowsePane();
 
         intiCards(cardPanel);
+        
+        setLocationRelativeTo(null);
 
         getContentPane().add(cardPanel);
         layout.show(cardPanel, PanelIds.START_PANEL_ID);
@@ -108,7 +110,7 @@ public class MainFrame extends javax.swing.JFrame implements EventListener {
         } else if (event instanceof StartOverEvent) {
             showByPanelId(PanelIds.START_PANEL_ID);
         }
-    }
+    }   
 
     @Override
     public void register() {
