@@ -12,14 +12,6 @@
 
 [3. Testing and Faults](#testing-and-faults)
 
-[4. Conclusion, further development, and reflection](#conclusion-further-development-and-reflection)
-
-[4.1. Conclusion](#conclusion)
-
-[4.2. Further Development](#further-development)
-
-[4.3. Reflection](#reflection)
-
 [Appendix A. User flow](#appendix-a.-user-flow)
 
 [Appendix B. Whitebox testing](#appendix-b.-whitebox-testing)
@@ -262,100 +254,6 @@ allowed to thoroughly examine the codebase. Each method and the logic
 behind functionalities were thoroughly explored to create test cases
 that actually is useful to assess the quality and reliability of the
 application.
-
-# Conclusion, further development, and reflection
-
-## 4.1. Conclusion
-
-The London Musical System is an GUI application developed using NetBeans
-IDE with Java programming language. The system was interactive and
-intuitive to its users. Various layouts available on the Java Swing
-library provided structure to the GUI. The use of embedded Apache Derby
-database provided structured way of managing musicals and ticket data in
-the system. Overall, the system allowed users to browse and search
-musicals, select show date and time with interactive calendar and book
-tickets of 3 different types: Adult, Senior and Student. Lastly, during
-testing it was found that the system is not able to validate the ticket
-count which was thus updated with a fix. The importance of testing
-became apparent by the bug finding.
-
-## 4.2. Further Development
-
-Due to the limited time available, the system is not developed to scale
-with large users, as well as the design of the UI is made with default
-colours. The major things that are needed in the system is design
-overhaul, which includes the use of suitable colours and animations.
-With a good-looking design that is user-friendly and accurate will help
-multiple types of users to use the system with ease. Besides, the design
-of the interface, the system needs to have an Admin panel, where the
-admin will be able to add musicals, edit the show times and price for
-each ticket type. Additionally, implementing the feature to sync the
-changes with a database server will allow it to centralize the
-application, which requires replacing the embedded database with a
-database hosted in a web server.
-
-In summary, major further development that can be done in the
-application are: UI overhaul, Admin dashboard and management and Use of
-centralized database server. Apart from those changes multiple quality
-of life changes can be made such as, full-text search, musicals
-filters/sort, rating musicals, and ranking musicals by popularity. With
-all these features implemented in few-months, the application will be
-ready to receive more complex features like user authentication and
-musicals recommendation.
-
-## 4.3. Reflection
-
-While creating the London Musical Ticket System to streamline the
-process of selling concert tickets, I faced several intricacies that
-challenged my abilities and enhanced my understanding of software
-development. The development of the custom calendar feature posed a
-major obstacle. The inclusion of this component was important to the
-application\'s functionality, as it enabled users to choose specific
-dates for musical performances. The complexity of this work lies in
-creating a dynamic and interactive calendar that can accurately display
-the available showtimes retrieved from the database. To implement this
-functionality, extensive exploration of Java\'s date and time handling
-capabilities was necessary, together with an understanding of
-event-driven programming to guarantee the calendar\'s right response to
-user activities. In addition, the task of overseeing the status of the
-calendar and guaranteeing its synchronisation with the database to
-enable immediate updates of the available showtimes was a substantial
-technical challenge.
-
-Another complex part involved ensuring that accurate panel was presented
-at the suitable moment. It was especially difficult while propagating
-the application from one stage to another. The procedure requires
-several sequential stages, starting with the user inputting their phone
-number, resulting in the establishment of a fresh user record in the
-database if one is not already there. Subsequently, visitors have the
-option to search or browse the catalogue of musicals, then select a
-specific musical, and then engage with the personalised calendar to
-choose a day for the desired show. This interaction evolved to include
-the selection of specific showtimes for the specified day and the
-determination of the quantity of tickets for various categories such as
-Adult, Senior, and Student, finally, the last stage was purchasing the
-ticket. During those steps it was ncessary to smoothly transfer of
-information, such as the musical Id and ticket details from the browsing
-panel to the final summary page. The processing of user inputs and data
-transfer between different components of the GUI required precise
-attention to detail, making this phase of the development process
-complex.
-
-In addition to the difficulties faced, the project provided me with an
-opportunity to apply my current expertise, specifically in the domains
-of database querying and GUI layout design utilising NetBeans IDE. The
-simplicity of these tasks served as a balance to the more complex
-components of the project. While facing the challenges, I acquired
-significant insights into the significance of preparation, thorough
-experimentation, and flexibility in the field of software development.
-Developing the London Musical Ticket System not only improved my
-technical proficiency but also strengthened my problem-solving aptitude
-and resilience when facing complex programming obstacles. In essence,
-this project served as more than simply a theoretical exercise. It
-played a crucial role in my development as a software developer,
-providing me with a more comprehensive range of skills and a greater
-understanding of the complexities involved in designing software
-solutions that prioritise the needs of the user.
 
 # Appendix A. User flow
 
